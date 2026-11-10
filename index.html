@@ -95,11 +95,19 @@ footer p{max-width:90ch}
 .eq .ui{font-style:normal;font-size:.9rem;color:var(--green-ink);font-weight:650;display:block;margin-bottom:.15rem}
 
 .drawer{position:relative;margin-top:.5rem}
-.tabs{display:flex;align-items:flex-end;gap:0;overflow-x:auto;padding:12px 2px 0;scrollbar-width:thin}
+.tabs{display:flex;align-items:stretch;gap:0;padding:12px 10px 0 2px}
+.tabs .ftab{flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:flex-start}
+@media (max-width:1060px){
+  .tabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.55rem;padding:0 0 .7rem}
+  .tabs .ftab{margin:0;transform:none;border:1px solid var(--rule);border-top:4px solid var(--brass);border-radius:10px;padding:.65rem .8rem .75rem;box-shadow:none}
+  .tabs .ftab:hover,.tabs .ftab:focus-visible,.tabs .ftab[aria-current="true"]{transform:none}
+  .tabs .ftab[aria-current="true"]{border-color:var(--ink);border-top-color:var(--ink)}
+  .drawer-body{border-radius:10px}
+}
 .ftab{all:unset;cursor:pointer;flex:1 0 132px;min-width:132px;position:relative;margin-right:-10px;background:var(--card);border:1px solid var(--rule);border-bottom:none;border-radius:10px 10px 0 0;padding:.6rem .9rem 1.1rem;transform:translateY(8px);transition:transform .18s ease,background .18s ease;box-shadow:var(--shadow);font-family:var(--display)}
 .ftab:nth-child(odd){background:var(--panel)}
 .ftab .yr{display:block;font-weight:800;font-stretch:70%;font-size:1.65rem;line-height:1;color:var(--ink)}
-.ftab .nm{display:block;font-size:.88rem;font-stretch:90%;font-weight:600;color:var(--ink-2);line-height:1.2;margin-top:.3rem}
+.ftab .nm{display:block;overflow-wrap:anywhere;hyphens:auto;font-size:.88rem;font-stretch:90%;font-weight:600;color:var(--ink-2);line-height:1.2;margin-top:.3rem}
 .ftab:hover,.ftab:focus-visible,.ftab[aria-current="true"]{transform:translateY(0);z-index:2;background:var(--brass-soft)}
 .ftab:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .drawer-body{background:var(--brass-soft);border:1px solid var(--rule);border-radius:0 0 10px 10px;padding:1.1rem 1.3rem;position:relative;z-index:3}
