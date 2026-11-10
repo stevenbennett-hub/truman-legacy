@@ -296,6 +296,8 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .vplay:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .showme{max-width:62ch;margin:-.6rem 0 1.4rem;padding:.55rem .9rem;border-left:4px solid var(--brass);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
 .showme strong{font-family:var(--display);font-stretch:92%}
+.symnote{max-width:62ch;margin:.2rem 0 1.2rem;padding:.55rem .9rem;border-left:4px solid var(--green);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
+.symnote strong{font-family:var(--display);font-stretch:92%}
 /* site guide */
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
 .gtabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
@@ -2290,6 +2292,7 @@ function vPathway(id){
   <p class="crumbs"><a href="#pathways">${tr("All pathways","Todas las rutas")}</a></p>
   <header class="phead"><div><p class="kicker">${tr(`Pathway ${n} of ${PATHWAYS.length}`,`Ruta ${n} de ${PATHWAYS.length}`)}</p><h2 tabindex="-1">${esc(p.title)}</h2></div><span class="yr" aria-hidden="true">${p.yr}</span></header>
   <div class="introrow"><p class="lede">${esc(p.intro)}</p>${art(PATH_ART[id],"plate big")}</div>
+  ${id === "atomic" ? `<p class="symnote"><strong>${tr("Why a paper crane?","¿Por qué una grulla de papel?")}</strong> ${tr("The crane stands for a real artifact at the Truman Library: a crane about one inch tall, folded from a cellophane wrapper by Sadako Sasaki. She was two years old when the atomic bomb hit Hiroshima and died of radiation-related leukemia in 1955, at age 12. In 2015 her brother, Masahiro Sasaki, gave it to the library, with Truman’s grandson Clifton Truman Daniel taking part in the ceremony.","La grulla representa un artefacto real de la Biblioteca Truman: una grulla de unos 2,5 cm de alto, doblada con un envoltorio de celofán por Sadako Sasaki. Tenía dos años cuando la bomba atómica cayó sobre Hiroshima y murió de leucemia causada por la radiación en 1955, a los 12 años. En 2015 su hermano, Masahiro Sasaki, la donó a la biblioteca, en una ceremonia en la que participó Clifton Truman Daniel, nieto de Truman.")} <a href="https://prologue.blogs.archives.gov/2015/11/23/flight-of-a-sadako-crane/" target="_blank" rel="noopener">${tr("Read the National Archives story","Lee el relato de los Archivos Nacionales (en inglés)")}${NEWTAB()}</a>. ${tr("Show-me question: why might a museum place this crane in the same room as the Nagasaki bomb’s safety plug?","Pregunta para demostrar: ¿por qué un museo pondría esta grulla en la misma sala que el tapón de seguridad de la bomba de Nagasaki?")}</p>` : ""}
   <div class="inq"><span class="ui">${tr("Inquiry question for","Pregunta de investigación para")} ${gradeName()}</span><p>${esc(p.question[band()])}</p></div>
   <div class="btnrow">
     ${S.path === id ? `<span class="pill live">${tr("This is your pathway","Esta es tu ruta")}</span><a class="btn" href="#phase-1">${tr("Continue to phase 1","Continuar a la fase 1")}</a>` : `<button class="btn" data-act="choose" data-p="${id}">${tr("Choose this pathway","Elegir esta ruta")}</button>`}
