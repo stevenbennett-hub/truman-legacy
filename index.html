@@ -387,7 +387,6 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
   .box,.sorter li,.hunt li{break-inside:avoid}
 }
 
-body:not(.has-dl) .dl-only{display:none!important}
 </style>
 </head>
 <body>
@@ -1671,6 +1670,88 @@ function audioClip(cls){
   </figure>`;
 }
 
+/* ---------- minimal .docx writer (no libraries): journal -> Word / Google Docs ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder(), chunks = [], central = []; let off = 0;
+  const u16 = n => [n & 255, (n >>> 8) & 255], u32 = n => [n & 255, (n >>> 8) & 255, (n >>> 16) & 255, (n >>> 24) & 255];
+  files.forEach(f => {
+    const name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+    const local = [0x50,0x4B,0x03,0x04, ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0)];
+    chunks.push(new Uint8Array(local), name, data);
+    central.push(new Uint8Array([0x50,0x4B,0x01,0x02, ...u16(20), ...u16(20), ...u16(0x0800), ...u16(0), ...u16(0), ...u16(0x21), ...u32(crc), ...u32(data.length), ...u32(data.length), ...u16(name.length), ...u16(0), ...u16(0), ...u16(0), ...u16(0), ...u32(0), ...u32(off)]), name);
+    off += local.length + name.length + data.length;
+  });
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const end = new Uint8Array([0x50,0x4B,0x05,0x06, 0,0, 0,0, ...u16(files.length), ...u16(files.length), ...u32(cdSize), ...u32(off), 0,0]);
+  return new Blob([...chunks, ...central, end], {type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+}
+const xesc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
+function runsFrom(node, fmt = {}){
+  let out = "";
+  node.childNodes.forEach(n => {
+    if (n.nodeType === 3) { const t = n.textContent.replace(/[ \t\r\n]+/g, " "); if (t) out += `<w:r><w:rPr>${fmt.b ? "<w:b/>" : ""}${fmt.i ? "<w:i/>" : ""}${fmt.sz ? `<w:sz w:val="${fmt.sz}"/>` : ""}${fmt.color ? `<w:color w:val="${fmt.color}"/>` : ""}</w:rPr><w:t xml:space="preserve">${xesc(t)}</w:t></w:r>`; }
+    else if (n.nodeType === 1) {
+      const tag = n.tagName;
+      if (tag === "BR") out += "<w:r><w:br/></w:r>";
+      else if (tag === "BUTTON" || n.classList.contains("sr")) {}
+      else out += runsFrom(n, Object.assign({}, fmt, (tag === "STRONG" || tag === "B") ? {b:true} : {}, (tag === "EM" || tag === "I") ? {i:true} : {}, n.classList.contains("fine") ? {sz:18, color:"555555"} : {}));
+    }
+  });
+  return out;
+}
+const para = (runs, opts = "") => `<w:p><w:pPr>${opts}<w:spacing w:after="120"/></w:pPr>${runs}</w:p>`;
+function blocksFrom(el){
+  let out = "";
+  el.childNodes.forEach(n => {
+    if (n.nodeType === 3) { if (n.textContent.trim()) out += para(runsFrom({childNodes:[n]})); return; }
+    if (n.nodeType !== 1) return;
+    const tag = n.tagName;
+    if (/^H[1-4]$/.test(tag)) { const sz = {H1:36, H2:30, H3:26, H4:22}[tag]; out += `<w:p><w:pPr><w:keepNext/><w:spacing w:before="200" w:after="80"/></w:pPr>${runsFrom(n, {b:true, sz, color:"17243A"})}</w:p>`; }
+    else if (tag === "P" || tag === "DT" || tag === "DD" || tag === "FIGCAPTION") out += para(runsFrom(n));
+    else if (tag === "UL" || tag === "OL") { let i = 0; n.querySelectorAll(":scope > li").forEach(li => { i++; out += para(`<w:r><w:t xml:space="preserve">${tag === "OL" ? i + ". " : "• "}</w:t></w:r>` + runsFrom(li), `<w:ind w:left="360" w:hanging="260"/>`); }); }
+    else if (tag === "TABLE") {
+      const rows = [...n.querySelectorAll("tr")]; if (!rows.length) return;
+      const cols = Math.max(...rows.map(r => r.children.length)), w = Math.floor(9360 / cols);
+      out += `<w:tbl><w:tblPr><w:tblW w:w="${w * cols}" w:type="dxa"/><w:tblLayout w:type="fixed"/><w:tblBorders>${["top","left","bottom","right","insideH","insideV"].map(b => `<w:${b} w:val="single" w:sz="4" w:color="999999"/>`).join("")}</w:tblBorders><w:tblCellMar><w:left w:w="80" w:type="dxa"/><w:right w:w="80" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${`<w:gridCol w:w="${w}"/>`.repeat(cols)}</w:tblGrid>`;
+      rows.forEach(r => { const hdr = [...r.children].every(c => c.tagName === "TH"); out += `<w:tr><w:trPr><w:cantSplit/>${hdr ? "<w:tblHeader/>" : ""}</w:trPr>`; [...r.children].forEach(c => { const head = c.tagName === "TH"; out += `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${head ? '<w:shd w:val="clear" w:color="auto" w:fill="E3E7E0"/>' : ""}</w:tcPr><w:p><w:pPr>${hdr ? "<w:keepNext/>" : ""}<w:spacing w:after="0"/></w:pPr>${runsFrom(c, head ? {b:true, sz:18} : {sz:18}) || "<w:r><w:t></w:t></w:r>"}</w:p></w:tc>`; }); for (let k = r.children.length; k < cols; k++) out += `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/></w:tcPr><w:p/></w:tc>`; out += "</w:tr>"; });
+      out += "</w:tbl>" + para("");
+    }
+    else out += blocksFrom(n);
+  });
+  return out;
+}
+function journalDocx(){
+  const tmp = document.createElement("div"); tmp.innerHTML = journalBody(true);
+  const title = tr("My research journal","Mi diario de investigación") + ": " + tr("Presidential Decisions, Lasting Consequences","Decisiones presidenciales, consecuencias duraderas");
+  const body = `<w:p><w:pPr><w:spacing w:after="160"/></w:pPr><w:r><w:rPr><w:b/><w:sz w:val="40"/><w:color w:val="17243A"/></w:rPr><w:t xml:space="preserve">${xesc(title)}</w:t></w:r></w:p>` + blocksFrom(tmp) + para(`<w:r><w:rPr><w:sz w:val="16"/><w:color w:val="555555"/></w:rPr><w:t xml:space="preserve">${xesc(LICENSE_LINE())}</w:t></w:r>`);
+  const doc = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+  const styles = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Georgia"/><w:sz w:val="22"/><w:lang w:val="${S.lang === "es" ? "es-US" : "en-US"}"/></w:rPr></w:rPrDefault></w:docDefaults></w:styles>`;
+  return zipStore([
+    {name:"[Content_Types].xml", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`},
+    {name:"_rels/.rels", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`},
+    {name:"word/_rels/document.xml.rels", data:`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`},
+    {name:"word/document.xml", data:doc},
+    {name:"word/styles.xml", data:styles}
+  ]);
+}
+/* save a Blob or string: Claude downloads capability first, then a normal browser download */
+async function saveBlob(name, blobOrText, okMsg){
+  if (dl) {
+    try {
+      const data = typeof blobOrText === "string" ? blobOrText : new Uint8Array(await blobOrText.arrayBuffer());
+      await dl.save({filename:name, data}); toast(okMsg); return true;
+    } catch(e) { if (e && e.code !== "unavailable") { toast(tr("The download didn’t finish. Try again.","La descarga no se completó. Inténtalo de nuevo.")); return false; } }
+  }
+  try {
+    const blob = typeof blobOrText === "string" ? new Blob([blobOrText], {type: name.endsWith(".json") ? "application/json" : "text/html"}) : blobOrText;
+    const url = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000);
+    toast(okMsg + " " + tr("Check your downloads folder.","Revisa tu carpeta de descargas.")); return true;
+  } catch(e) { toast(tr("Downloads aren’t available here. Use Print instead.","Las descargas no están disponibles aquí. Usa Imprimir.")); return false; }
+}
+
 /* ---------- state ---------- */
 const KEY = "truman-oer-v1";
 const DEF = {role:"student", band:"ms", lang:"en", path:null, visit:"museum", p1:{}, p2:{}, p3:{}, evidence:[], sorts:{}, hunt:{}, huntChecked:false, audit:[], product:null, reflect:{}, aiLog:[], ideas:{}, rhet:{}, student:{}};
@@ -2352,12 +2433,13 @@ function vJournal(){
     <div>${field("student.cls", tr("Class or period","Clase o período"), "", {input:true})}</div>
   </div>
   <section class="box savebox" aria-labelledby="h-save">
-    <h3 id="h-save">${tr("Save your work as a file","Guarda tu trabajo en un archivo")}</h3>
-    <p>${tr("Some school computers erase browser data when you log out. Save a file to keep your work safe, move it to another device, or turn it in. Load the file later to pick up where you left off.","Algunas computadoras escolares borran los datos del navegador al cerrar sesión. Guarda un archivo para proteger tu trabajo, pasarlo a otro dispositivo o entregarlo. Después, carga el archivo para continuar donde lo dejaste.")}</p>
+    <h3 id="h-save">${tr("Save your work to keep going later","Guarda tu trabajo para continuar después")}</h3>
+    <p>${tr("Some school computers erase browser data when you log out. Save a work file at the end of class, then load it next time to pick up where you left off, even on a different device.","Algunas computadoras escolares borran los datos del navegador al cerrar sesión. Guarda un archivo de trabajo al final de la clase y cárgalo la próxima vez para continuar donde lo dejaste, incluso en otro dispositivo.")}</p>
+    <p class="fine">${tr("The work file (.json) is only for loading back into this lesson; it isn’t meant to be opened in Word. To turn in your work, use “Download for Word or Google Docs” above.","El archivo de trabajo (.json) solo sirve para volver a cargarlo en esta lección; no está hecho para abrirse en Word. Para entregar tu trabajo, usa «Descargar para Word o Google Docs» arriba.")}</p>
     ${pendingImport ? `<div class="note warn" role="alert"><p><strong class="ui">${tr("Replace your current work?","¿Reemplazar tu trabajo actual?")}</strong> ${tr(`The file ${esc(pendingImport.name)} will replace everything in this journal on this device.`,`El archivo ${esc(pendingImport.name)} reemplazará todo lo que hay en este diario en este dispositivo.`)}</p><div class="btnrow" style="margin-bottom:0"><button class="btn" data-act="import-confirm">${tr("Replace with the file","Reemplazar con el archivo")}</button><button class="btn ghost" data-act="import-cancel">${tr("Cancel","Cancelar")}</button></div></div>` : ""}
-    <div class="btnrow" style="margin-bottom:0"><button class="btn" data-act="save-file">${tr("Save my work to a file","Guardar mi trabajo en un archivo")}</button><label class="btn ghost filebtn">${tr("Load my work from a file","Cargar mi trabajo desde un archivo")}<input type="file" id="jload" accept=".json,application/json" class="sr"></label></div>
+    <div class="btnrow" style="margin-bottom:0"><button class="btn" data-act="save-file">${tr("Save my work file","Guardar mi archivo de trabajo")}</button><label class="btn ghost filebtn">${tr("Load my work file","Cargar mi archivo de trabajo")}<input type="file" id="jload" accept=".json,application/json" class="sr"></label></div>
   </section>
-  <div class="btnrow"><button class="btn" data-act="print" data-k="journal">${tr("Print journal","Imprimir diario")}</button><button class="btn ghost dl-only" data-act="download" data-k="journal">${tr("Download journal","Descargar diario")}</button><button class="btn ghost" data-act="copy-journal">${tr("Copy as text","Copiar como texto")}</button><button class="btn ghost" data-act="clear">${clearArmed ? tr("Click again to erase everything","Haz clic otra vez para borrarlo todo") : tr("Erase my journal","Borrar mi diario")}</button></div>
+  <div class="btnrow"><button class="btn" data-act="word-file">${tr("Download for Word or Google Docs","Descargar para Word o Google Docs")}</button><button class="btn ghost" data-act="print" data-k="journal">${tr("Print journal","Imprimir diario")}</button><button class="btn ghost" data-act="copy-journal">${tr("Copy as text","Copiar como texto")}</button><button class="btn ghost" data-act="clear">${clearArmed ? tr("Click again to erase everything","Haz clic otra vez para borrarlo todo") : tr("Erase my journal","Borrar mi diario")}</button></div>
   <h3>${tr("Progress","Progreso")}</h3>${checklist()}
   <div class="section">${journalBody(false)}</div>`;
 }
@@ -2471,7 +2553,7 @@ function planBody(){
   return `
   <section class="section" id="tg-glance"><h3>At a glance</h3>
     <div class="grid2"><div>
-      <p><strong>Author:</strong> Steven Bennett, Educational Specialist (Ed.S.) program in Educational Technology, University of Central Missouri. Contact: <a href="mailto:steven.bennett@kckps.org">steven.bennett@kckps.org</a><br><strong>Grades:</strong> 6–8 and 9–12, with a grade-band switch that adjusts questions, reading, scaffolds, and expectations.<br><strong>Time:</strong> 7–8 class sessions of about 50 minutes plus a field trip, or a compressed 3-session version.<br><strong>Format:</strong> Inquiry-based, experiential, and place-based, with an equivalent virtual option and a full non-AI option.</p>
+      <p><strong>Live version:</strong> <a href="https://stevenbennett-hub.github.io/truman-legacy/">https://stevenbennett-hub.github.io/truman-legacy/</a><br><strong>Author:</strong> Steven Bennett, Educational Specialist (Ed.S.) program in Educational Technology, University of Central Missouri. Contact: <a href="mailto:steven.bennett@kckps.org">steven.bennett@kckps.org</a><br><strong>Grades:</strong> 6–8 and 9–12, with a grade-band switch that adjusts questions, reading, scaffolds, and expectations.<br><strong>Time:</strong> 7–8 class sessions of about 50 minutes plus a field trip, or a compressed 3-session version.<br><strong>Format:</strong> Inquiry-based, experiential, and place-based, with an equivalent virtual option and a full non-AI option.</p>
       <p><strong>Essential question:</strong> How do the decisions of one leader shape society, and how can artificial intelligence help us investigate their lasting consequences?</p>
     </div><div>
       <p><strong>Materials:</strong> this interactive resource (or its printed worksheets); internet access for the Truman Library and National Archives collections; the printed museum field guide for an in-person visit; optional access to a district-approved AI tool.</p>
@@ -2524,7 +2606,7 @@ function planBody(){
     <p><strong>Phase 1.</strong> Model the sort with one statement aloud. Circulate to check that interpretations make a claim. A strong inquiry question is contestable and answerable with evidence; a weak one can be answered with a single fact.</p>
     <p><strong>Phase 2.</strong> In the museum, limit screens: students use the printed field guide and enter their best evidence afterward. Point out the difference between original artifacts, reproductions, and interactive simulations such as the Berlin Airlift station. Virtual students complete four stations with the same evidence requirements.</p>
     <p><strong>Museum map and photographs.</strong> Use the interactive map before a visit to assign chaperone routes and after it to connect evidence to online collections. Each photograph is public domain with a credit and a link to its record; students can treat them as primary sources (who took the photo, and why?).</p>
-    <p><strong>Saving work.</strong> Student work lives in the browser. On shared or managed devices, have students use “Save my work to a file” at the end of each session and “Load my work from a file” at the start of the next. The saved file can also be submitted as evidence of process.</p>
+    <p><strong>Saving work.</strong> Student work lives in the browser. On shared or managed devices, have students use “Save my work file” at the end of each session and “Load my work file” at the start of the next; that .json file is only for reloading. To turn in work, students use “Download for Word or Google Docs,” which creates a formatted .docx they can submit through Google Classroom or open in Word.</p>
     <p><strong>Phase 3.</strong> For the AI audit, provide a short AI-generated summary yourself if students cannot use AI tools. Emphasize that finding no errors is a valid result if the verification is careful.</p>
   </section>
 
@@ -2987,7 +3069,7 @@ function printable(k){
     <p class="fine">${tr("Station names and numbers follow the museum’s printed visitor map. Exhibits can change.","Los nombres y números de las estaciones siguen el mapa impreso del museo. Las exhibiciones pueden cambiar.")}</p>`}; }
   if (k === "virtual") return {title:tr("Virtual investigation worksheet","Hoja de trabajo de la investigación virtual"), html: printHeader() + (p ? `
     ${tr(["Station 1: the document collection","Station 2: the inquiry lesson","Station 3: another perspective","Station 4: how a museum tells it"],["Estación 1: la colección de documentos","Estación 2: la lección de investigación","Estación 3: otra perspectiva","Estación 4: cómo lo cuenta un museo"]).map(t => `<div class="pg"><h3>${t}</h3><p>${tr("Source title, creator, and date:","Título de la fuente, autor y fecha:")}</p>${lines(1)}<p>${tr("What I observed:","Lo que observé:")}</p>${lines(2)}<p>${tr("What it suggests about my question:","Lo que sugiere sobre mi pregunta:")}</p>${lines(2)}</div>`).join("")}
-    <h3>${tr("Sources for this pathway","Fuentes de esta ruta")}</h3><ul>${p.sources.map(s => `<li>${esc(s.title)} (${esc(orgL(s.org))}): ${s.url}</li>`).join("")}</ul>` : `<p>${tr("Choose a pathway first to see its sources.","Primero elige una ruta para ver sus fuentes.")}</p>`)};
+    <h3>${tr("Sources for this pathway","Fuentes de esta ruta")}</h3><ul>${p.sources.map(s => `<li>${esc(s.title)} (${esc(orgL(s.org))}): ${s.url}</li>`).join("")}</ul>` : `<p>${tr("Find the sources for your pathway on its page in the interactive lesson.","Encuentra las fuentes de tu ruta en su página de la lección interactiva.")}</p>${tr(["Station 1: the document collection","Station 2: the inquiry lesson","Station 3: another perspective","Station 4: how a museum tells it"],["Estación 1: la colección de documentos","Estación 2: la lección de investigación","Estación 3: otra perspectiva","Estación 4: cómo lo cuenta un museo"]).map(t => `<div class="pg"><h3>${t}</h3><p>${tr("Source title, creator, and date:","Título de la fuente, autor y fecha:")}</p>${lines(1)}<p>${tr("What I observed:","Lo que observé:")}</p>${lines(2)}<p>${tr("What it suggests about my question:","Lo que sugiere sobre mi pregunta:")}</p>${lines(2)}</div>`).join("")}`)};
   if (k === "hunt") { const H = HUNTL(); return {title:tr("Hallucination hunt","Cacería de alucinaciones"), html:`<p>${tr("Name","Nombre")}: ______________________________</p>
     <p><strong>${tr("This is a simulation.","Esto es una simulación.")}</strong> ${tr("The answer below was written for this lesson to look like an AI response and contains planted errors. A student asked an AI tool to summarize Harry Truman’s presidency. Mark each sentence, then write how you would check it.","La respuesta de abajo se escribió para esta lección de modo que pareciera una respuesta de IA y contiene errores a propósito. Un estudiante le pidió a una herramienta de IA que resumiera la presidencia de Harry Truman. Marca cada oración y luego escribe cómo la verificarías.")}</p>
     ${H.map((h,i) => `<div class="pg"><p><strong>${i+1}.</strong> ${esc(h.s)}</p><p>☐ ${tr("Looks accurate","Parece correcta")} &nbsp;&nbsp; ☐ ${tr("Inaccurate or invented","Incorrecta o inventada")}</p><p>${tr("How I would check it:","Cómo la verificaría:")}</p>${lines(1)}</div>`).join("")}
@@ -3005,7 +3087,7 @@ function printable(k){
   return {title:"Teacher lesson plan: Presidential Decisions, Lasting Consequences", html: inEnglish(planBody)};
 }
 const PRINT_CSS = `body{font-family:Georgia,"Times New Roman",serif;font-size:11pt;line-height:1.45;color:#000;max-width:7.5in;margin:.5in auto;padding:0 .3in}h1{font-family:Arial,sans-serif;font-size:18pt;margin:0 0 .3em}h3,h4{font-family:Arial,sans-serif;margin:1em 0 .3em}table{border-collapse:collapse;width:100%;font-size:9.5pt}th,td{border:1px solid #888;padding:4px 6px;vertical-align:top;text-align:left}.wline{border-bottom:1px solid #999;height:1.7em}.pg{break-inside:avoid;margin:.6em 0}.fine{font-size:9pt;color:#444}.key{break-before:page}.sr{display:none}a{color:#000}footer{margin-top:2em;font-size:8.5pt;color:#444;border-top:1px solid #aaa;padding-top:.5em}`;
-const LICENSE_LINE = () => tr(`By Steven Bennett, Ed.S. program in Educational Technology, University of Central Missouri. Original lesson materials licensed CC BY 4.0. Linked and quoted third-party materials keep their own terms. Not affiliated with or endorsed by the Truman Library or the National Archives.`,`Por Steven Bennett, programa Ed.S. en Tecnología Educativa, University of Central Missouri. Materiales originales de la lección con licencia CC BY 4.0. Los materiales de terceros enlazados o citados conservan sus propias condiciones. Sin afiliación ni respaldo de la Biblioteca Truman ni de los Archivos Nacionales.`);
+const LICENSE_LINE = () => tr(`By Steven Bennett, Ed.S. program in Educational Technology, University of Central Missouri. Original lesson materials licensed CC BY 4.0. Linked and quoted third-party materials keep their own terms. Not affiliated with or endorsed by the Truman Library or the National Archives. Live version: https://stevenbennett-hub.github.io/truman-legacy/`,`Por Steven Bennett, programa Ed.S. en Tecnología Educativa, University of Central Missouri. Materiales originales de la lección con licencia CC BY 4.0. Los materiales de terceros enlazados o citados conservan sus propias condiciones. Sin afiliación ni respaldo de la Biblioteca Truman ni de los Archivos Nacionales. Versión en línea: https://stevenbennett-hub.github.io/truman-legacy/`);
 function doPrint(k){
   const {title, html} = printable(k);
   const pa = document.getElementById("print-area");
@@ -3019,14 +3101,12 @@ function doPrint(k){
   toast(dl ? tr("If the print dialog didn’t open, use Download instead.","Si no se abrió la ventana de impresión, usa Descargar.") : tr("If the print dialog didn’t open, open this page in its own browser tab and try again.","Si no se abrió la ventana de impresión, abre esta página en su propia pestaña e inténtalo de nuevo."));
 }
 async function doDownload(k){
-  if (!dl) return toast(tr("Downloads aren’t available in this view. Use Print instead.","Las descargas no están disponibles aquí. Usa Imprimir."));
   const {title, html} = printable(k);
   const lang = k === "plan" ? "en" : S.lang;
   const doc = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><style>${PRINT_CSS}</style></head><body><h1>${esc(title)}</h1>${html}<footer>${LICENSE_LINE()}</footer></body></html>`;
   const base = {field:"field-guide", virtual:"virtual-worksheet", hunt:"hallucination-hunt", key:"answer-key", rhet:"speech-analysis", rubric:"rubric", journal:"journal", plan:"lesson-plan"}[k] || k;
   const name = "truman-" + base + (isES() && k !== "plan" ? "-es" : "") + ".html";
-  try { await dl.save({filename:name, data:doc}); toast(tr("Download ready. Open the file and print it if you need paper.","Descarga lista. Abre el archivo e imprímelo si lo necesitas en papel.")); }
-  catch(e) { toast(e && e.code === "unavailable" ? tr("Downloads aren’t available here. Use Print instead.","Las descargas no están disponibles aquí. Usa Imprimir.") : tr("The download didn’t finish. Try again or use Print.","La descarga no se completó. Inténtalo de nuevo o usa Imprimir.")); }
+  await saveBlob(name, doc, tr("Download ready. Open the file and print it if you need paper.","Descarga lista. Abre el archivo e imprímelo si lo necesitas en papel."));
 }
 
 /* ---------- teacher guide wrapper (guide stays in English) ---------- */
@@ -3042,16 +3122,7 @@ async function saveJournalFile(){
   const data = JSON.stringify({app:FILE_APP, version:1, saved:new Date().toISOString(), data:S}, null, 1);
   const who = ((S.student && S.student.name) || "student").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "student";
   const name = `truman-journal-${who}-${new Date().toISOString().slice(0,10)}.json`;
-  if (dl) {
-    try { await dl.save({filename:name, data}); toast(tr("Saved. Keep this file somewhere safe.","Guardado. Conserva este archivo en un lugar seguro.")); return; }
-    catch(e) { if (e && e.code !== "unavailable") { toast(tr("The file didn’t save. Try again.","El archivo no se guardó. Inténtalo de nuevo.")); return; } }
-  }
-  try {
-    const url = URL.createObjectURL(new Blob([data], {type:"application/json"}));
-    const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
-    toast(tr("Saved. Check your downloads folder.","Guardado. Revisa tu carpeta de descargas."));
-  } catch(e) { toast(tr("Saving files isn’t available here. Use Print or Copy as text instead.","Aquí no se pueden guardar archivos. Usa Imprimir o Copiar como texto.")); }
+  await saveBlob(name, data, tr("Saved. Keep this file to load your work back in later.","Guardado. Conserva este archivo para volver a cargar tu trabajo más tarde."));
 }
 function readJournalFile(file){
   if (file.size > 3000000) { toast(tr("That file is too large to be a journal.","Ese archivo es demasiado grande para ser un diario.")); return; }
@@ -3109,7 +3180,7 @@ function renderChrome(){
   document.getElementById("foot1").innerHTML = tr(
     `<strong>Presidential Decisions, Lasting Consequences: Exploring Truman’s Legacy Through AI.</strong> Created by Steven Bennett for the Ed.S. program in Educational Technology at the University of Central Missouri. Original lesson materials are offered under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 (CC BY 4.0)</a> license. Linked documents, photographs, exhibits, and websites belong to their owners and are not covered by this license. This resource is not affiliated with or endorsed by the Harry S. Truman Library and Museum or the National Archives.`,
     `<strong>Decisiones presidenciales, consecuencias duraderas: el legado de Truman a través de la IA.</strong> Creado por Steven Bennett para el programa Ed.S. en Tecnología Educativa de la University of Central Missouri. Los materiales originales de la lección se ofrecen con una licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">Creative Commons Atribución 4.0 (CC BY 4.0)</a>. Los documentos, fotografías, exhibiciones y sitios web enlazados pertenecen a sus dueños y no están cubiertos por esta licencia. Este recurso no está afiliado con la Biblioteca y Museo Harry S. Truman ni con los Archivos Nacionales, ni cuenta con su respaldo.`);
-  setText("foot2", tr("Developed with assistance from Claude (Anthropic) and reviewed by Steven Bennett. Last updated and links checked: November 2026. Your work is saved only in this browser.","Desarrollado con la ayuda de Claude (Anthropic) y revisado por Steven Bennett. Última actualización y revisión de enlaces: noviembre de 2026. Tu trabajo se guarda solo en este navegador."));
+  setText("foot2", tr("Developed with assistance from Claude (Anthropic) and reviewed by Steven Bennett. Last updated and links checked: November 2026. Live version: https://stevenbennett-hub.github.io/truman-legacy/. Your work is saved only in this browser.","Desarrollado con la ayuda de Claude (Anthropic) y revisado por Steven Bennett. Última actualización y revisión de enlaces: noviembre de 2026. Versión en línea: https://stevenbennett-hub.github.io/truman-legacy/. Tu trabajo se guarda solo en este navegador."));
 }
 function focusKey(el){
   if (!el || el === document.body) return null;
@@ -3194,6 +3265,7 @@ document.addEventListener("click", e => {
     case "print": doPrint(d.k); break;
     case "download": doDownload(d.k); break;
     case "save-file": saveJournalFile(); break;
+    case "word-file": { const who = ((S.student && S.student.name) || "student").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "student"; saveBlob(`truman-journal-${who}-${new Date().toISOString().slice(0,10)}.docx`, journalDocx(), tr("Your journal is ready to open in Word or upload to Google Docs.","Tu diario está listo para abrirse en Word o subirse a Google Docs.")); break; }
     case "import-confirm": if (pendingImport){ applyImport(pendingImport.data); pendingImport = null; } break;
     case "import-cancel": pendingImport = null; render(); toast(tr("Nothing was changed.","No se cambió nada.")); break;
     case "copy-journal": {
