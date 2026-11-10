@@ -278,6 +278,10 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .filebtn{cursor:pointer}
 .filebtn:focus-within{outline:3px solid var(--focus);outline-offset:2px}
 .namefields{max-width:820px;gap:0 1.4rem}
+/* opening activity */
+.buckbox{margin:0 0 1.4rem}
+.buckphotos{max-width:640px}
+.buckphotos .photo figcaption{font-size:.84rem}
 /* video cards */
 .videos .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
 .vcard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:1rem;align-items:start;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1rem}
@@ -2200,6 +2204,7 @@ function vHome(){
     </div>
   </section>
 
+  <div class="tnote tonly"><p><strong>Start here:</strong> <a href="#teacher" data-act="tg" data-el="tg-buck">open the 15-minute opening activity, “The Buck Stops Here”</a>. It uses the two sign photographs below and previews the lesson’s AI-checking habit.</p></div>
   <section class="section archive-pair" aria-labelledby="h-arch">
     <h2 id="h-arch" class="sr">${tr("From the archives","De los archivos")}</h2>
     <p class="kicker">${tr("From the archives: two sides of one sign","De los archivos: dos lados de un mismo letrero")}</p>
@@ -2369,7 +2374,14 @@ function checkpoint(path, q){ return `<div class="box"><h3>${tr("Checkpoint","Pu
 function phase1(p){
   const sorted = p && S.sorts[p.id] && Object.keys(S.sorts[p.id]).length >= 5;
   return `
-  <div class="tnote tonly"><p><strong>Before the museum: about two 50-minute sessions.</strong> Open with “The Buck Stops Here”: what does it mean to be responsible for a decision whose consequences last for generations? Introduce the essential question, then model the fact-or-interpretation sort with one statement before students work. Check every initial interpretation for a clear claim, and every inquiry question for contestability: could two informed people answer it differently using evidence?</p></div>
+  <div class="tnote tonly"><p><strong>Opening activity:</strong> <a href="#teacher" data-act="tg" data-el="tg-buck">“The Buck Stops Here” (15 minutes): steps, timing, and the AI twist</a>. Students do the quick-write in the box below.</p><p><strong>Before the museum: about two 50-minute sessions.</strong> After the opening activity, ask: what does it mean to be responsible for a decision whose consequences last for generations? Introduce the essential question, then model the fact-or-interpretation sort with one statement before students work. Check every initial interpretation for a clear claim, and every inquiry question for contestability: could two informed people answer it differently using evidence?</p></div>
+  <section class="box buckbox" aria-labelledby="h-buck">
+    <h3 id="h-buck">${tr("Start here: “The Buck Stops Here”","Empieza aquí: «The Buck Stops Here»")}</h3>
+    <p>${tr("Truman kept this sign on his desk. Visitors saw “The Buck Stops here!” The side facing Truman said “I’m from Missouri,” a saying that meant “you’ll have to show me.” “Passing the buck” means shifting responsibility to someone else.","Truman tenía este letrero en su escritorio. Los visitantes veían «The Buck Stops here!» («La responsabilidad termina aquí»). El lado que miraba hacia Truman decía «I’m from Missouri» («Soy de Misuri»), un dicho que significaba «tendrás que demostrármelo». «Passing the buck» significa pasarle la responsabilidad a otra persona.")}</p>
+    <div class="photogrid n2 buckphotos">${photo("77-3799")}${photo("77-3800")}</div>
+    ${field("p1.buck", tr("Is the buck ever stopped by one person alone? Who else shares responsibility for a president’s decisions?","¿La responsabilidad recae alguna vez en una sola persona? ¿Quién más comparte la responsabilidad de las decisiones de un presidente?") + (isHS() ? " " + tr("Is it fair to hold one leader responsible for consequences that last for generations?","¿Es justo hacer responsable a un solo líder de consecuencias que duran generaciones?") : ""), "", {rows:3, frames: tr(["The buck stops with…, but … also shared responsibility because…"],["La responsabilidad es de…, pero … también la compartió porque…"])})}
+    <p class="fine">${tr("Coming up: you’ll check a famous claim about this sign in the hallucination hunt, and return to this question later.","Más adelante: comprobarás una afirmación famosa sobre este letrero en la cacería de alucinaciones y volverás a esta pregunta.")}</p>
+  </section>
   <ol class="steps">
     ${stepLi(!!p, `<h3>${tr("Select a historical pathway","Elige una ruta histórica")}</h3>${p ? `<p>${tr("You chose","Elegiste")} <strong>${esc(p.title)}</strong>. <a href="#pathways">${tr("Change pathway","Cambiar de ruta")}</a></p>` : needPath()}`)}
     ${stepLi(sorted, `<h3>${tr("Examine introductory evidence","Examina la evidencia inicial")}</h3>
@@ -2736,7 +2748,7 @@ function journalBody(printing){
   <p><strong>${tr("Pathway:","Ruta:")}</strong> ${p ? esc(p.title) : tr("Not chosen","Sin elegir")}<br><strong>${tr("Grade band:","Nivel de grado:")}</strong> ${isHS() ? "9–12" : "6–8"}${p ? `<br><strong>${tr("Inquiry question:","Pregunta de investigación:")}</strong> ${esc(p.question[band()])}` : ""}</p>
   <h3>${tr("Phase 1: Investigate","Fase 1: Investigar")}</h3>
   ${p ? `<p class="fine">${tr(`Fact-or-interpretation sort: ${p.sort.filter((s,i) => sortAns[i] === s.a).length} of ${p.sort.length} matched.`, `Actividad de hechos e interpretaciones: ${p.sort.filter((s,i) => sortAns[i] === s.a).length} de ${p.sort.length} aciertos.`)}</p>` : ""}
-  ${jBlock(tr("What I noticed","Lo que noté"), S.p1.notice)}${jBlock(tr("Initial interpretation","Interpretación inicial"), S.p1.interp)}${jBlock(tr("Refined inquiry question","Pregunta de investigación mejorada"), S.p1.question)}${jBlock(tr("Supporting questions","Preguntas de apoyo"), S.p1.supporting)}${jBlock(tr("Evidence I need","Evidencia que necesito"), S.p1.needs)}${jBlock(tr("Checkpoint","Punto de control"), S.p1.checkpoint)}
+  ${jBlock(tr("“The Buck Stops Here”: who shares responsibility?","«The Buck Stops Here»: ¿quién comparte la responsabilidad?"), S.p1.buck)}${jBlock(tr("What I noticed","Lo que noté"), S.p1.notice)}${jBlock(tr("Initial interpretation","Interpretación inicial"), S.p1.interp)}${jBlock(tr("Refined inquiry question","Pregunta de investigación mejorada"), S.p1.question)}${jBlock(tr("Supporting questions","Preguntas de apoyo"), S.p1.supporting)}${jBlock(tr("Evidence I need","Evidencia que necesito"), S.p1.needs)}${jBlock(tr("Checkpoint","Punto de control"), S.p1.checkpoint)}
   <h3>${tr("Phase 2: Explore","Fase 2: Explorar")}</h3>
   <p class="fine">${tr("Option:","Opción:")} ${S.visit === "virtual" ? tr("virtual investigation","investigación virtual") : tr("museum visit","visita al museo")}</p>
   ${evidenceTable(!printing)}
@@ -2883,7 +2895,7 @@ function vTeacher(){
   <h2 tabindex="-1">Teacher guide and lesson plan</h2>
   <p class="lede">Presidential Decisions, Lasting Consequences: Exploring Truman’s Legacy Through AI. Grades 6–12. Social studies with interdisciplinary extensions.</p>
   <div class="btnrow"><button class="btn" data-act="print" data-k="plan">Print lesson plan</button><button class="btn ghost dl-only" data-act="download" data-k="plan">Download lesson plan</button><button class="btn ghost" data-act="print" data-k="key">Print answer key</button><button class="btn ghost dl-only" data-act="download" data-k="key">Download answer key</button></div>
-  <div class="tocbar" role="navigation" aria-label="Sections of the teacher guide">${[["tg-glance","At a glance"],["tg-core","Core and extensions"],["tg-obj","Objectives"],["tg-std","Standards"],["tg-seq","Sequence"],["tg-assess","Assessment"],["tg-diff","Differentiation"],["tg-disc","By discipline"],["tg-ai","AI guidelines"],["tg-sens","Sensitive topics"],["tg-trip","Field trip"],["tg-oer","OER Commons"]].map(([id,t]) => `<button class="choice" data-act="jump" data-el="${id}">${t}</button>`).join("")}</div>
+  <div class="tocbar" role="navigation" aria-label="Sections of the teacher guide">${[["tg-glance","At a glance"],["tg-buck","Opening activity"],["tg-core","Core and extensions"],["tg-obj","Objectives"],["tg-std","Standards"],["tg-seq","Sequence"],["tg-assess","Assessment"],["tg-diff","Differentiation"],["tg-disc","By discipline"],["tg-ai","AI guidelines"],["tg-sens","Sensitive topics"],["tg-trip","Field trip"],["tg-oer","OER Commons"]].map(([id,t]) => `<button class="choice" data-act="jump" data-el="${id}">${t}</button>`).join("")}</div>
   <div id="plan-body">${planBody()}</div>`;
 }
 
@@ -2897,6 +2909,21 @@ function planBody(){
       <p><strong>Materials:</strong> this interactive resource (or its printed worksheets); internet access for the Truman Library and National Archives collections; the printed museum field guide for an in-person visit; optional access to a district-approved AI tool.</p>
       <p><strong>Instructional stance:</strong> AI is a learning companion that asks questions and gets checked. Students keep the productive struggle: they write every claim, interpretation, and product themselves.</p>
     </div></div>
+  </section>
+
+  <section class="section" id="tg-buck"><h3>Opening activity: “The Buck Stops Here” (about 15 minutes)</h3>
+    <p><strong>Purpose:</strong> launch the essential question by thinking about responsibility, and preview the lesson’s habit of checking claims. Use it in session 1, before students choose a pathway.</p>
+    <p><strong>Materials:</strong> the two photographs of Truman’s desk sign (Home page, “From the archives,” or the student version at the start of Investigation phase 1); a projector; optionally, a district-approved AI tool.</p>
+    <p><strong>Background:</strong> the sign was made at the federal reformatory in El Reno, Oklahoma, and mailed to Truman in October 1945. The side visitors saw read “The Buck Stops here!” The side facing Truman read “I’m from Missouri,” a popular saying that meant “you’ll have to show me,” the same skeptical habit this lesson asks students to practice. “Passing the buck” means shifting responsibility to someone else.</p>
+    <ol>
+      <li><strong>Look (3 minutes).</strong> Show the front of the sign. Ask: what does “passing the buck” mean today, and what is Truman saying about his job? Then show the back. Ask: why might he want to see “I’m from Missouri” every day?</li>
+      <li><strong>Quick-write (4 minutes).</strong> Students respond in the phase 1 box or on paper: Is the buck ever stopped by one person alone? Who else shares responsibility for a president’s decisions? Prompt for advisers, Congress, the military, voters, and the people affected.</li>
+      <li><strong>The AI twist (5 minutes).</strong> Ask an AI tool, in front of the class, “What did Truman say in his ‘Buck Stops Here’ speech?” Many tools will describe a speech that never happened. Compare the answer with the hallucination hunt sentence about an invented “speech to Congress” and with the Truman Library’s page on the sign. Discuss why a leading question invites an invented answer. <em>No-AI option:</em> project the hallucination hunt sentence and the Truman Library page, and have students decide which is reliable and why.</li>
+      <li><strong>Connect (3 minutes).</strong> Introduce the essential question. Tell students they will come back to “Who else shared responsibility?” at museum station 10 (The Oval Office) or in their final reflection.</li>
+    </ol>
+    <p><strong>Grades 6–8:</strong> focus on what responsibility means; offer the starter “The buck stops with…, but … also shared responsibility because….” <strong>Grades 9–12:</strong> add “Is it fair to hold one leader responsible for consequences that last for generations?” and discuss how the wording of a question shapes an AI’s answer.</p>
+    <p><strong>Look-fors:</strong> students name at least two other people or groups who shared responsibility; they can explain why the “speech” is false using a named source.</p>
+    <p><strong>Related on the site:</strong> the sign photographs on the Home page; museum map station 10; the hallucination hunt on the AI literacy page; the farewell address card in the Rhetoric lab; the Truman Library’s <a href="https://www.trumanlibrary.gov/education/trivia/buck-stops-here-sign" target="_blank" rel="noopener">page on the sign</a>.</p>
   </section>
 
   <section class="section" id="tg-core"><h3>Core and extensions</h3>
@@ -2929,7 +2956,7 @@ function planBody(){
 
   <section class="section" id="tg-seq"><h3>Lesson sequence</h3>
     <div class="scroll-x"><table class="seq"><thead><tr><th>Session</th><th>Phase</th><th>What happens</th><th>Formative check</th></tr></thead><tbody>
-      <tr><td>1</td><td>Launch and phase 1</td><td>Hook with “The Buck Stops Here.” Introduce the essential question. Students browse pathways, choose one, read the context, and complete the fact-or-interpretation sort.</td><td>Sort results (diagnostic)</td></tr>
+      <tr><td>1</td><td>Launch and phase 1</td><td>Opening activity: “The Buck Stops Here” (15 minutes; see the Opening activity section). Introduce the essential question. Students browse pathways, choose one, read the context, and complete the fact-or-interpretation sort.</td><td>Sort results (diagnostic)</td></tr>
       <tr><td>2</td><td>Phase 1</td><td>Students open sources, write initial interpretations, refine questions with the AI coach or partner cards, and plan evidence needs.</td><td>Phase 1 checkpoint</td></tr>
       <tr><td>3</td><td>AI literacy</td><td>Hallucination hunt, discussion of the five verification habits, and class norms for AI use. Can run before or after the field trip.</td><td>Hunt score and discussion</td></tr>
       <tr><td>4</td><td>Phase 2</td><td>Field trip to the Truman Library (about two hours in the galleries, following each pathway’s station route), or two sessions of virtual stations and the online museum map. Students log evidence.</td><td>Evidence log; phase 2 checkpoint</td></tr>
@@ -3591,11 +3618,12 @@ function render(){
   }
   document.title = (main.querySelector("h1,h2")?.textContent || tr("Truman’s Legacy","El legado de Truman")) + " | " + tr("Truman’s Legacy","El legado de Truman");
   render.first = false;
+  if (pendingJump && currentView === "teacher") { const el = document.getElementById(pendingJump); pendingJump = null; if (el) { el.scrollIntoView({block:"start"}); const h = el.querySelector("h3"); if (h) { h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); } } }
   if (currentView === "journey" && pendingEv) { const f = document.getElementById("ev-loc"); if (f) { f.value = pendingEv; f.scrollIntoView({block:"center"}); f.focus({preventScroll:true}); toast(tr("Station added. Now record what you observed.","Estación agregada. Ahora anota lo que observaste.")); } pendingEv = null; }
   if (currentView === "coach") { renderChat(); if (pendingCoach) { const b = document.getElementById("coach-in"); if (b && !b.disabled) { b.value = pendingCoach; b.focus(); } pendingCoach = null; } }
 }
 render.first = true;
-let pendingCoach = null, pendingEv = null, pendingImport = null;
+let pendingCoach = null, pendingEv = null, pendingImport = null, pendingJump = null;
 function go(to){ if (location.hash === "#" + to) route(); else location.hash = to; }
 
 /* ---------- events ---------- */
@@ -3604,6 +3632,7 @@ document.addEventListener("click", e => {
   const d = b.dataset, act = d.act;
   switch (act){
     case "go": go(d.to); break;
+    case "tg": e.preventDefault(); if (S.role !== "teacher") { S.role = "teacher"; save(); } pendingJump = d.el; go("teacher"); break;
     case "band": S.band = d.v; save(); render(); toast(d.v === "hs" ? tr("Showing grades 9–12","Mostrando 9.º a 12.º grado") : tr("Showing grades 6–8","Mostrando 6.º a 8.º grado")); break;
     case "role": S.role = d.v; save(); render(); toast(d.v === "teacher" ? tr("Teacher view: notes and guide shown","Vista docente: se muestran las notas y la guía (en inglés)") : tr("Student view","Vista de estudiante")); break;
     case "lang": S.lang = d.v; save(); render(); toast(d.v === "es" ? "Página en español" : "Page in English"); break;
