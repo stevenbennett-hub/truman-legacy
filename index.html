@@ -294,6 +294,8 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .vplay circle{fill:var(--ink)} .vplay path{fill:var(--on-ink)}
 .vplay:hover circle{fill:var(--brass)}
 .vplay:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.showme{max-width:62ch;margin:-.6rem 0 1.4rem;padding:.55rem .9rem;border-left:4px solid var(--brass);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
+.showme strong{font-family:var(--display);font-stretch:92%}
 /* site guide */
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
 .gtabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
@@ -2197,6 +2199,7 @@ function vHome(){
     <h1 id="h-title" tabindex="-1">${tr("Presidential Decisions, Lasting Consequences","Decisiones presidenciales, consecuencias duraderas")}</h1>
     <p class="sub">${tr("Exploring Truman’s legacy through historical inquiry, with AI as a thinking partner","El legado de Truman a través de la investigación histórica, con la IA como compañera de pensamiento")}</p>
     <div class="hero-row"><div class="eq"><span class="ui">${tr("Essential question","Pregunta esencial")}</span><p>${tr("How do the decisions of one leader shape society, and how can artificial intelligence help us investigate their lasting consequences?","¿Cómo moldean a la sociedad las decisiones de un líder y cómo puede ayudarnos la inteligencia artificial a investigar sus consecuencias duraderas?")}</p></div>${art("desk","hero-art")}</div>
+  <p class="showme"><strong>${tr("Missouri is the “Show-Me State.”","Misuri es el «Show-Me State» («el estado de “demuéstramelo”»).")}</strong> ${tr("In this lesson, every claim, from an AI tool, a museum label, or a documentary, has to show you the evidence. Even the nickname’s origin is debated:","En esta lección, toda afirmación, venga de una herramienta de IA, una cédula de museo o un documental, tiene que mostrarte la evidencia. Hasta el origen del apodo se debate:")} <a href="https://www.sos.mo.gov/archives/history/slogan" target="_blank" rel="noopener">${tr("see what the Missouri Secretary of State says","mira lo que dice la Secretaría de Estado de Misuri")}${NEWTAB()}</a>.</p>
   <p class="guidelink"><a href="#guide">${tr("New here? See what each tab does","¿Eres nuevo? Mira para qué sirve cada pestaña")} →</a></p>
     <div class="drawer">
       <div class="tabs" role="group" aria-label="${tr("Nine decisions to investigate","Nueve decisiones para investigar")}">${tabs}</div>
@@ -2914,7 +2917,7 @@ function planBody(){
   <section class="section" id="tg-buck"><h3>Opening activity: “The Buck Stops Here” (about 15 minutes)</h3>
     <p><strong>Purpose:</strong> launch the essential question by thinking about responsibility, and preview the lesson’s habit of checking claims. Use it in session 1, before students choose a pathway.</p>
     <p><strong>Materials:</strong> the two photographs of Truman’s desk sign (Home page, “From the archives,” or the student version at the start of Investigation phase 1); a projector; optionally, a district-approved AI tool.</p>
-    <p><strong>Background:</strong> the sign was made at the federal reformatory in El Reno, Oklahoma, and mailed to Truman in October 1945. The side visitors saw read “The Buck Stops here!” The side facing Truman read “I’m from Missouri,” a popular saying that meant “you’ll have to show me,” the same skeptical habit this lesson asks students to practice. “Passing the buck” means shifting responsibility to someone else.</p>
+    <p><strong>Background:</strong> the sign was made at the federal reformatory in El Reno, Oklahoma, and mailed to Truman in October 1945. The side visitors saw read “The Buck Stops here!” The side facing Truman read “I’m from Missouri,” a popular saying that meant “you’ll have to show me,” the same skeptical habit this lesson asks students to practice. It is tied to Missouri’s unofficial nickname, the “Show-Me State,” whose origin is itself debated; the Missouri Secretary of State’s <a href="https://www.sos.mo.gov/archives/history/slogan" target="_blank" rel="noopener">page on the nickname</a> makes a good quick source-checking example. “Passing the buck” means shifting responsibility to someone else.</p>
     <ol>
       <li><strong>Look (3 minutes).</strong> Show the front of the sign. Ask: what does “passing the buck” mean today, and what is Truman saying about his job? Then show the back. Ask: why might he want to see “I’m from Missouri” every day?</li>
       <li><strong>Quick-write (4 minutes).</strong> Students respond in the phase 1 box or on paper: Is the buck ever stopped by one person alone? Who else shares responsibility for a president’s decisions? Prompt for advisers, Congress, the military, voters, and the people affected.</li>
