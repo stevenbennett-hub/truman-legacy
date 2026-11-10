@@ -278,6 +278,16 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .filebtn{cursor:pointer}
 .filebtn:focus-within{outline:3px solid var(--focus);outline-offset:2px}
 .namefields{max-width:820px;gap:0 1.4rem}
+/* video cards */
+.videos .vgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1rem}
+.vcard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:1rem;align-items:start;background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:1rem}
+.vcard h4{margin:.25rem 0 .2rem}
+.vcard p{margin:.25rem 0}
+.vplay{display:block;width:64px;height:64px;border-radius:50%}
+.vplay svg{width:64px;height:64px;display:block}
+.vplay circle{fill:var(--ink)} .vplay path{fill:var(--on-ink)}
+.vplay:hover circle{fill:var(--brass)}
+.vplay:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 /* site guide */
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
 .gtabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
@@ -1715,6 +1725,43 @@ function audioClip(cls){
   </figure>`;
 }
 
+/* ---------- video links (self-contained: remove this file and the videoBlock() calls to take them off) ---------- */
+const VIDEOS = {
+ acceptance:{url:"https://www.c-span.org/clip/public-affairs-event/truman-acceptance-speech/5137048", src:"C-SPAN", kind:["Primary source: film of the speech","Fuente primaria: filmación del discurso"],
+  t:["Truman accepts the 1948 Democratic nomination","Truman acepta la candidatura demócrata de 1948"], d:["July 15, 1948","15 de julio de 1948"],
+  w:["Truman spoke at about 2 a.m. to a tired convention. Watch his energy, his gestures, and how the crowd reacts. What do you notice that you missed when you only read the text?","Truman habló cerca de las 2 de la madrugada ante una convención cansada. Observa su energía, sus gestos y cómo reacciona el público. ¿Qué notas que no viste cuando solo leíste el texto?"]},
+ farewell:{url:"https://www.c-span.org/program/white-house-event/president-truman-farewell-address/136122", src:"C-SPAN", kind:["Primary source: newsreel","Fuente primaria: noticiero"],
+  t:["Truman’s farewell address (newsreel)","Discurso de despedida de Truman (noticiero)"], d:["January 15, 1953","15 de enero de 1953"],
+  w:["A newsreel showing parts of Truman’s farewell message. How does an unpopular president speak to history? Compare his tone here with the 1948 speech. Remember that a newsreel chose which parts to show.","Un noticiero que muestra partes del mensaje de despedida de Truman. ¿Cómo le habla a la historia un presidente impopular? Compara su tono aquí con el discurso de 1948. Recuerda que el noticiero eligió qué partes mostrar."]},
+ documentary:{url:"https://www.c-span.org/program/american-presidents/life-portrait-of-harry-s-truman/163696", src:"C-SPAN", kind:["Documentary program: historians’ interpretations","Programa documental: interpretaciones de historiadores"],
+  t:["Life Portrait of Harry S. Truman","Retrato de vida de Harry S. Truman"], d:["Aired October 18, 1999","Transmitido el 18 de octubre de 1999"],
+  w:["Broadcast live from Independence, Missouri, with Truman Library staff, historians, a local teacher, Truman’s papers, and archival film. It runs two to three hours, so watch the part about your pathway’s decision. Historians’ views are interpretations: choose one claim and check it against a primary source.","Transmitido en vivo desde Independence, Misuri, con personal de la Biblioteca Truman, historiadores, una maestra local, documentos de Truman y filmaciones de archivo. Dura de dos a tres horas, así que mira la parte sobre la decisión de tu ruta. Las opiniones de los historiadores son interpretaciones: elige una afirmación y compruébala con una fuente primaria."],
+  note:["Free on C-SPAN.org, from C-SPAN’s Peabody Award-winning American Presidents series.","Gratis en C-SPAN.org, de la serie American Presidents de C-SPAN, ganadora del premio Peabody."]},
+ communism:{url:"https://www.pbs.org/video/american-experience-truman-on-the-enemy-communism/", src:"PBS American Experience", kind:["Documentary clip (about 2 minutes)","Fragmento de documental (unos 2 minutos)"],
+  t:["Truman on the enemy: communism","Truman y el enemigo: el comunismo"], d:["From the 1997 film","Del documental de 1997"],
+  w:["After World War II, Truman watched Eastern Europe come under Soviet control. Which Cold War question does the clip stress: who owns the economy, or who holds political power?","Después de la Segunda Guerra Mundial, Truman vio cómo Europa del Este quedaba bajo control soviético. ¿Qué pregunta de la Guerra Fría destaca el fragmento: quién es dueño de la economía o quién tiene el poder político?"]}
+};
+function videoCard(id){
+  const v = VIDEOS[id], L = a => isES() ? a[1] : a[0];
+  return `<div class="vcard">
+    <a class="vplay" href="${v.url}" target="_blank" rel="noopener" aria-label="${tr("Watch","Ver")}: ${esc(L(v.t))} (${v.src}, ${tr("opens in a new tab","se abre en una pestaña nueva")})"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M19 15 L35 24 L19 33 Z"/></svg></a>
+    <div>
+      <p class="dmeta"><span class="pill">${esc(L(v.kind))}</span> <span class="fine">${esc(L(v.d))}</span></p>
+      <h4><a href="${v.url}" target="_blank" rel="noopener">${esc(L(v.t))}${NEWTAB()}</a></h4>
+      <p class="fine">${tr("Watch on","Ver en")} ${esc(v.src)}${isES() ? " (en inglés)" : ""}</p>
+      <p class="dlook"><strong class="ui">${tr("Watch for:","Observa:")}</strong> ${esc(L(v.w))}</p>
+      ${v.note ? `<p class="fine">${esc(L(v.note))}</p>` : ""}
+    </div>
+  </div>`;
+}
+function videoBlock(ids, title, intro){
+  return `<section class="section videos" aria-label="${esc(title)}">
+    <h3>${esc(title)}</h3>${intro ? `<p>${intro}</p>` : ""}
+    <div class="vgrid">${ids.map(videoCard).join("")}</div>
+    <p class="fine">${tr("Videos open on the PBS or C-SPAN website. If one won’t play, your school network may block it; ask your teacher.","Los videos se abren en el sitio de PBS o C-SPAN. Si alguno no se reproduce, puede que la red de tu escuela lo bloquee; pregúntale a tu maestro o maestra.")}</p>
+  </section>`;
+}
+
 /* ---------- minimal .docx writer (no libraries): journal -> Word / Google Docs ---------- */
 const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++){ let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
 function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
@@ -2897,6 +2944,7 @@ function planBody(){
     <p><strong>Phase 1.</strong> Model the sort with one statement aloud. Circulate to check that interpretations make a claim. A strong inquiry question is contestable and answerable with evidence; a weak one can be answered with a single fact.</p>
     <p><strong>Phase 2.</strong> In the museum, limit screens: students use the printed field guide and enter their best evidence afterward. Point out the difference between original artifacts, reproductions, and interactive simulations such as the Berlin Airlift station. Virtual students complete four stations with the same evidence requirements.</p>
     <p><strong>Museum map and photographs.</strong> Use the interactive map before a visit to assign chaperone routes and after it to connect evidence to online collections. Each photograph is public domain with a credit and a link to its record; students can treat them as primary sources (who took the photo, and why?).</p>
+    <p><strong>Videos.</strong> Video cards in the Rhetoric lab and on the Cold War ideas page link to PBS and C-SPAN rather than embedding players, so they work on filtered school networks and show no ads or autoplay suggestions on this page. Preview each video and confirm it plays on student devices. For an optional full-length biography, C-SPAN’s 1999 <a href="https://www.c-span.org/program/american-presidents/life-portrait-of-harry-s-truman/163696" target="_blank" rel="noopener">“Life Portrait of Harry S. Truman”</a> was broadcast from Independence with Truman Library staff and historians; it runs two to three hours, so assign segments. Treat it as an interpretation that students test against primary sources.</p>
     <p><strong>Saving work.</strong> Student work lives in the browser. On shared or managed devices, have students use “Save my work file” at the end of each session and “Load my work file” at the start of the next; that .json file is only for reloading. To turn in work, students use “Download for Word or Google Docs,” which creates a formatted .docx they can submit through Google Classroom or open in Word.</p>
     <p><strong>Phase 3.</strong> For the AI audit, provide a short AI-generated summary yourself if students cannot use AI tools. Emphasize that finding no errors is a valid result if the verification is careful.</p>
   </section>
@@ -3049,6 +3097,7 @@ function vIdeas(){
   <p class="crumbs"><a href="#pathways">${tr("All pathways","Todas las rutas")}</a></p>
   <header class="phead"><div><p class="kicker">${tr("Background briefing","Información de contexto")}</p><h2 tabindex="-1">${tr("The ideas behind the Cold War","Las ideas detrás de la Guerra Fría")}</h2></div><span class="yr" aria-hidden="true">1946</span></header>
   <div class="introrow portrait-row wide-row"><p class="lede">${tr("Truman led the United States as the world split into two camps. To understand his decisions, you need the ideas people were arguing about: capitalism, socialism, and communism. These words were loaded then, and they still are. This briefing uses them the way people did in the 1940s and shows how supporters and critics of each described them.","Truman dirigió Estados Unidos mientras el mundo se dividía en dos bandos. Para entender sus decisiones, necesitas conocer las ideas que se discutían: capitalismo, socialismo y comunismo. Estas palabras tenían una gran carga entonces y todavía la tienen. Esta sección las usa como se usaban en los años cuarenta y muestra cómo las describían sus partidarios y sus críticos.")}</p>${photo("73-2875","portrait")}</div>
+  ${videoBlock(["communism"], tr("Watch: Truman and communism","Mira: Truman y el comunismo"), "")}
   <div class="tnote tonly"><p><strong>About 45 minutes.</strong> Use before phase 1, or when students reach the Berlin Airlift, Red Scare, or 1948 election pathways. Keep the discussion anchored in the 1940s and don’t apply these labels to current politicians or parties. Settled history, such as Stalin’s repression and the Depression, is stated plainly; the health insurance debate is presented through both sides’ own documents. The Kennan and Novikov telegrams are long; assign excerpts for most classes.</p></div>
   <div class="inq"><span class="ui">${tr("Two questions, not one line","Dos preguntas, no una sola línea")}</span><p>${tr("Who owns and runs the economy: private owners and markets, or the government? And who holds political power: voters in free elections, or a single party that allows no opposition?","¿Quién es dueño de la economía y la administra: dueños privados y el mercado, o el gobierno? ¿Y quién tiene el poder político: votantes en elecciones libres, o un solo partido que no permite oposición?")}</p></div>
   <p>${tr("Most quick definitions put these three ideas on a single line from “free market” to “total government control.” That hides the question that mattered most in the Cold War. Keep both questions in mind as you read.","La mayoría de las definiciones rápidas ponen estas tres ideas en una sola línea que va del «libre mercado» al «control total del gobierno». Eso oculta la pregunta que más importó en la Guerra Fría. Ten en cuenta las dos preguntas mientras lees.")}</p>
@@ -3191,6 +3240,8 @@ function vRhetoric(){
   <div class="tnote tonly"><p><strong>About 45–90 minutes, flexible.</strong> Built for ELA and Speech and Debate classes, and useful in any pathway. Assign one speech per group, or pair a speech with its “another voice” source so students analyze both sides of an argument. The Syracuse remarks are explicitly partisan campaign rhetoric; treat them as one side of a debate. Audio is available from the Truman Library for four of the nine speeches.</p></div>
   ${isES() ? `<p class="fine">Los discursos y los audios están en inglés. Puedes usar la traducción de tu navegador para leer los textos, pero escucha el audio original para analizar su forma de hablar.</p>` : ""}
   
+
+  ${videoBlock(["acceptance","farewell"], tr("Watch Truman speak","Mira hablar a Truman"), tr("Reading a speech and watching it are different experiences. Both of these speeches are also in the list below, with full text and audio.","Leer un discurso y verlo son experiencias distintas. Ambos discursos también están en la lista de abajo, con texto completo y audio."))}
 
   <section class="section" aria-labelledby="h-speeches">
     <h2 id="h-speeches">${tr("Nine speeches across the pathways","Nueve discursos de todas las rutas")}</h2>
