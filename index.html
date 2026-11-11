@@ -107,7 +107,10 @@ footer p{max-width:90ch}
 .ftab{all:unset;cursor:pointer;flex:1 0 132px;min-width:132px;position:relative;margin-right:-10px;background:var(--card);border:1px solid var(--rule);border-bottom:none;border-radius:10px 10px 0 0;padding:.6rem .9rem 1.1rem;transform:translateY(8px);transition:transform .18s ease,background .18s ease;box-shadow:var(--shadow);font-family:var(--display)}
 .ftab:nth-child(odd){background:var(--panel)}
 .ftab .yr{display:block;font-weight:800;font-stretch:70%;font-size:1.65rem;line-height:1;color:var(--ink)}
-.ftab .nm{display:block;overflow-wrap:anywhere;hyphens:auto;font-size:.88rem;font-stretch:90%;font-weight:600;color:var(--ink-2);line-height:1.2;margin-top:.3rem}
+.ftab .ftart{display:block;width:44px;margin:0 0 .35rem}
+@media (max-width:1060px){.tabs .ftab{position:relative;padding-right:3.6rem}.ftab .ftart{position:absolute;right:.7rem;top:.75rem;width:40px;margin:0}}
+.ftab .pn{display:block;font-size:.74rem;font-weight:700;font-stretch:90%;color:var(--green-ink);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.2rem}
+.ftab .nm{display:block;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto;font-size:.88rem;font-stretch:90%;font-weight:600;color:var(--ink-2);line-height:1.2;margin-top:.3rem}
 .ftab:hover,.ftab:focus-visible,.ftab[aria-current="true"]{transform:translateY(0);z-index:2;background:var(--brass-soft)}
 .ftab:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .drawer-body{background:var(--brass-soft);border:1px solid var(--rule);border-radius:0 0 10px 10px;padding:1.1rem 1.3rem;position:relative;z-index:3}
@@ -303,6 +306,10 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .symnote strong{font-family:var(--display);font-stretch:92%}
 /* site guide */
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
+.choosehead{margin:1.8rem 0 .3rem}
+.choosesub{margin:0 0 .4rem;max-width:62ch}
+.drawer-body .peekrow{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;margin-top:.7rem}
+.drawer-body .peekrow a{font-family:var(--display);font-weight:700}
 .gtabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
 .gtabs .box h4{margin:0 0 .4rem}
 .gdl dt{font-family:var(--display);font-weight:800;margin-top:.8rem}
@@ -531,7 +538,7 @@ const PATHWAYS = [
   gallery:"The First Four Months"
 },
 {
-  id:"civil-rights", yr:"1948", short:"Desegregation",
+  id:"civil-rights", yr:"1948", short:"Civil rights",
   title:"Civil Rights and Military Desegregation",
   intro:`More than one million Black Americans served in World War II in segregated units. Many came home to a country that still denied them equal rights, and some veterans were attacked while still in uniform. In 1948, Truman used his power as commander in chief to order equal treatment in the armed forces. How much did that order change, and why did he do it?`,
   question:{
@@ -1162,7 +1169,7 @@ atomic:{
   extensions:[[`Ciencias y STEM`,`Haz un modelo de cómo la fisión nuclear libera energía y cómo funciona una reacción en cadena (se relaciona con NGSS HS-PS1-8). Luego discutan la responsabilidad de los científicos: en junio de 1945, algunos científicos del Proyecto Manhattan firmaron el Informe Franck, que pedía una demostración antes de cualquier uso militar. Búscalo y léelo antes de discutirlo.`],[`Arte y medios`,`La Biblioteca Truman exhibe una pequeña grulla de papel doblada por Sadako Sasaki, una niña que murió de leucemia después del bombardeo de Hiroshima. Diseña un panel de museo que combine un artefacto con un documento y explique por qué van juntos.`]]
 },
 "civil-rights":{
-  short:"La desegregación", title:"Los derechos civiles y la desegregación militar",
+  short:"Derechos civiles", title:"Los derechos civiles y la desegregación militar",
   intro:`Más de un millón de afroamericanos sirvieron en la Segunda Guerra Mundial en unidades segregadas. Muchos regresaron a un país que todavía les negaba la igualdad de derechos, y algunos veteranos fueron atacados cuando aún vestían el uniforme. En 1948, Truman usó su poder como comandante en jefe para ordenar un trato igualitario en las fuerzas armadas. ¿Cuánto cambió esa orden y por qué la dio?`,
   question:{ms:`¿Por qué ordenó Truman que las fuerzas armadas trataran a todos sus miembros por igual y cuánto cambió eso?`, hs:`¿Cómo debemos juzgar el historial de Truman en derechos civiles: como un punto de inflexión moral, un cálculo político o una promesa incompleta?`},
   context:{ms:[
@@ -2235,7 +2242,7 @@ function checklist(){
 
 /* ---------- views: home ---------- */
 function vHome(){
-  const tabs = [...PATHS()].sort((x,y) => x.yr.localeCompare(y.yr)).map(p => `<button class="ftab" data-act="go" data-to="p-${p.id}" data-peek="${p.id}" ${S.path === p.id ? 'aria-current="true"' : ""}><span class="yr">${p.yr}</span><span class="nm">${esc(p.short)}</span></button>`).join("");
+  const tabs = PATHS().map((p,i) => `<button class="ftab" data-act="go" data-to="p-${p.id}" data-peek="${p.id}" ${S.path === p.id ? 'aria-current="true"' : ""}>${ART[PATH_ART[p.id]] ? `<span class="art ftart" aria-hidden="true">${ART[PATH_ART[p.id]]()}</span>` : ""}<span class="pn">${tr("Pathway","Ruta")} ${i + 1}</span><span class="yr">${p.yr}</span><span class="nm">${esc(p.short)}</span></button>`).join("");
   const sel = S.path ? PW(S.path) : null;
   return `
   <section class="hero" aria-labelledby="h-title">
@@ -2244,9 +2251,12 @@ function vHome(){
     <div class="hero-row"><div class="eq"><span class="ui">${tr("Essential question","Pregunta esencial")}</span><p>${tr("How do the decisions of one leader shape society, and how can artificial intelligence help us investigate their lasting consequences?","¿Cómo moldean a la sociedad las decisiones de un líder y cómo puede ayudarnos la inteligencia artificial a investigar sus consecuencias duraderas?")}</p></div>${art("desk","hero-art")}</div>
   <p class="showme"><strong>${tr("Missouri is the “Show-Me State.”","Misuri es el «Show-Me State» («el estado de “demuéstramelo”»).")}</strong> ${tr("In this lesson, every claim, from an AI tool, a museum label, or a documentary, has to show you the evidence. Even the nickname’s origin is debated:","En esta lección, toda afirmación, venga de una herramienta de IA, una cédula de museo o un documental, tiene que mostrarte la evidencia. Hasta el origen del apodo se debate:")} <a href="https://www.sos.mo.gov/archives/history/slogan" target="_blank" rel="noopener">${tr("see what the Missouri Secretary of State says","mira lo que dice la Secretaría de Estado de Misuri")}${NEWTAB()}</a>.</p>
   <p class="guidelink"><a href="#guide">${tr("New here? See what each tab does","¿Eres nuevo? Mira para qué sirve cada pestaña")} →</a></p>
+    <h2 id="h-choose" class="choosehead">${tr("Start here: choose your pathway","Empieza aquí: elige tu ruta")}</h2>
+    <p class="choosesub">${tr("Each pathway is one of Truman’s decisions, or a moment that shaped him. Open a folder to look inside.","Cada ruta es una de las decisiones de Truman o un momento que lo formó. Abre una carpeta para ver qué hay dentro.")}</p>
     <div class="drawer">
-      <div class="tabs" role="group" aria-label="${tr("Nine decisions to investigate","Nueve decisiones para investigar")}">${tabs}</div>
-      <div class="drawer-body"><p id="peek" aria-live="polite">${sel ? `${tr("Your pathway:","Tu ruta:")} <strong>${esc(sel.title)}</strong>. ${esc(sel.question[band()])}` : tr("Pick a folder to open one of nine decisions and turning points in Harry Truman’s life.","Elige una carpeta para abrir una de las nueve decisiones y momentos clave en la vida de Harry Truman.")}</p></div>
+      <div class="tabs" role="group" aria-labelledby="h-choose">${tabs}</div>
+      <div class="drawer-body"><p id="peek" aria-live="polite">${sel ? `${tr("Your pathway:","Tu ruta:")} <strong>${esc(sel.title)}</strong>. ${esc(sel.question[band()])}` : tr("Click or tap a folder to open its pathway. On a computer, point to a folder first to preview it here.","Haz clic o toca una carpeta para abrir su ruta. En una computadora, pasa el cursor sobre una carpeta para ver aquí una vista previa.")}</p>
+        <div class="peekrow">${sel ? `<a class="btn small" href="#p-${sel.id}">${tr("Continue your pathway","Continuar tu ruta")}</a>` : ""}<a href="#pathways">${tr("Compare all nine pathways","Comparar las nueve rutas")} →</a></div></div>
     </div>
   </section>
 
@@ -3776,7 +3786,8 @@ document.addEventListener("keydown", e => {
 });
 function peek(id){
   const p = PW(id), el = document.getElementById("peek");
-  if (p && el) el.innerHTML = `<strong>${esc(p.title)}.</strong> ${esc(p.question[band()])}`;
+  const n = PATHWAYS.findIndex(x => x.id === id) + 1;
+  if (p && el) el.innerHTML = `<strong>${tr("Pathway","Ruta")} ${n}: ${esc(p.title)}.</strong> ${esc(p.question[band()])} <span class="fine">${tr("Click the folder to open it.","Haz clic en la carpeta para abrirla.")}</span>`;
 }
 document.addEventListener("mouseover", e => { const t = e.target.closest("[data-peek]"); if (t) peek(t.dataset.peek); });
 document.addEventListener("focusin", e => { const t = e.target.closest && e.target.closest("[data-peek]"); if (t) peek(t.dataset.peek); });
