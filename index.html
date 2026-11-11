@@ -161,6 +161,9 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .pcard:hover::before,.pcard:focus-visible::before{background:var(--brass-soft)}
 .pcard:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
 .pcard h3{margin:0 0 .4rem}
+.pdates{font-family:var(--display);font-stretch:92%;font-weight:700;color:var(--ink-2);font-size:.9rem;margin:-.15rem 0 .45rem}
+.pcard p.pdates{color:var(--ink-2);font-size:.9rem;margin:-.15rem 0 .45rem}
+.phead .pdates{margin:.35rem 0 0;font-size:1.05rem}
 .pcard p{font-size:.97rem;margin:0;color:var(--ink-2)}
 .pcard .chosen{position:absolute;right:.8rem;top:.7rem}
 
@@ -972,6 +975,22 @@ const PATHWAYS = [
 }
 
 ];
+/* Pathways display in chronological order (1948 pathways by month). Edit this list to change the order. */
+const PATH_ORDER = ["missouri","pendergast","atomic","red-scare","israel","berlin","civil-rights","election-1948","korea"];
+PATHWAYS.sort((a,b) => PATH_ORDER.indexOf(a.id) - PATH_ORDER.indexOf(b.id));
+/* Date span each pathway covers [English, Spanish]. */
+const PATH_DATES = {
+  missouri:["1884–1945","1884–1945"],
+  pendergast:["1936–1939","1936–1939"],
+  atomic:["April–August 1945","abril–agosto de 1945"],
+  "red-scare":["1947–1954","1947–1954"],
+  israel:["May 14, 1948","14 de mayo de 1948"],
+  berlin:["June 1948 – September 1949","junio de 1948 – septiembre de 1949"],
+  "civil-rights":["December 1946 – July 1948","diciembre de 1946 – julio de 1948"],
+  "election-1948":["November 2, 1948","2 de noviembre de 1948"],
+  korea:["June 1950 – July 1953","junio de 1950 – julio de 1953"]
+};
+const pDates = id => PATH_DATES[id] ? `<p class="pdates">${isES() ? PATH_DATES[id][1] : PATH_DATES[id][0]}</p>` : "";
 
 /* Stations follow the numbered map handed out at the Truman Library. The 1948 campaign area is not numbered on it. */
 const GALLERIES = [
@@ -1089,7 +1108,7 @@ const DISCIPLINES = [
   {d:"Social Studies and U.S. History", t:`Use the full inquiry arc. Assign pathways across the class, then run a gallery walk so students compare how decisions shaped the postwar world. Emphasize causation and continuity and change.`},
   {d:"English Language Arts", t:`Center primary-source close reading and argument writing. Use the fact-or-interpretation sort as a reading strategy, and grade the conclusion builder as a pre-writing assessment for the essay option.`},
   {d:"Speech and Debate", t:`Use the 1948 election and atomic bomb pathways for rhetorical analysis of Truman’s speeches and statements. The structured debate product works well as a culminating tournament. The Rhetoric lab gives a common framework and audio for analyzing Truman’s delivery.`},
-  {d:"Science and STEM", t:`Use Pathway 1 to teach fission and chain reactions (NGSS HS-PS1-8) and to discuss scientists’ ethical responsibility. The Berlin Airlift pathway offers a logistics and data problem.`},
+  {d:"Science and STEM", t:`Use the Atomic Bomb pathway to teach fission and chain reactions (NGSS HS-PS1-8) and to discuss scientists’ ethical responsibility. The Berlin Airlift pathway offers a logistics and data problem.`},
   {d:"Civics and Government", t:`Focus on executive power: executive orders (EO 9835, 9980, 9981), recognition of foreign governments, and the commander-in-chief role. Truman’s “six jobs of the president” display at the museum is a useful frame. The Pendergast pathway connects machine politics and 1930s vote fraud to today’s debates over election integrity and voting access.`},
   {d:"Technology and Media Literacy", t:`Lead with the hallucination hunt and the AI audit. Students practice lateral reading, citation checking, and AI disclosure. The Red Scare pathway connects to how rumors spread.`},
   {d:"Art and Media", t:`Use the digital exhibit product and the Thomas Hart Benton mural. Ask how museums frame stories through artifact placement, as in the room pairing the Nagasaki safety plug with Sadako Sasaki’s crane.`}
@@ -2284,6 +2303,7 @@ function vPathways(){
       ${art(PATH_ART[p.id],"spot")}
       <p class="kicker">${tr("Pathway","Ruta")} ${i + 1}${S.path === p.id ? ` <span class="pill live">${tr("Your pathway","Tu ruta")}</span>` : ""}</p>
       <h3>${esc(p.title)}</h3>
+      ${pDates(p.id)}
       <p>${esc(p.question[band()])}</p>
     </button>`).join("")}
   </div>
@@ -2317,7 +2337,7 @@ function vPathway(id){
   ${sens ? `<div class="tnote tonly"><p><strong>Sensitive content.</strong> ${sens}</p></div>` : ""}`;
   return `
   <p class="crumbs"><a href="#pathways">${tr("All pathways","Todas las rutas")}</a></p>
-  <header class="phead"><div><p class="kicker">${tr(`Pathway ${n} of ${PATHWAYS.length}`,`Ruta ${n} de ${PATHWAYS.length}`)}</p><h2 tabindex="-1">${esc(p.title)}</h2></div><span class="yr" aria-hidden="true">${p.yr}</span></header>
+  <header class="phead"><div><p class="kicker">${tr(`Pathway ${n} of ${PATHWAYS.length}`,`Ruta ${n} de ${PATHWAYS.length}`)}</p><h2 tabindex="-1">${esc(p.title)}</h2>${pDates(id)}</div><span class="yr" aria-hidden="true">${p.yr}</span></header>
   ${id === "atomic" ? `<div class="introrow portrait-row wide-row cranerow"><div class="cranemain"><p class="lede">${esc(p.intro)}</p>${inqBtns()}</div><div class="craneside"><figure class="photo portrait"><img src="https://i0.wp.com/prologue.blogs.archives.gov/wp-content/uploads/sites/9/2015/11/sadako-crane.jpg?w=760" width="760" height="496" alt="${tr("A tiny folded paper crane made from clear cellophane, shown up close.","Una pequeña grulla de papel doblada con celofán transparente, vista de cerca.")}" loading="lazy" decoding="async"><figcaption class="credit">${tr("Sadako Sasaki’s paper crane. Photo: U.S. National Archives, 2015.","La grulla de papel de Sadako Sasaki. Foto: Archivos Nacionales de EE. UU., 2015.")}</figcaption></figure><p class="symnote"><strong>${tr("Why a paper crane?","¿Por qué una grulla de papel?")}</strong> ${tr("Sadako Sasaki folded it from a cellophane wrapper. She was two when the bomb hit Hiroshima and died of radiation-related leukemia in 1955, at 12. Her brother Masahiro gave it to the Truman Library in 2015.","Sadako Sasaki la dobló con un envoltorio de celofán. Tenía dos años cuando la bomba cayó sobre Hiroshima y murió de leucemia causada por la radiación en 1955, a los 12. Su hermano Masahiro la donó a la Biblioteca Truman en 2015.")} <a href="https://prologue.blogs.archives.gov/2015/11/23/flight-of-a-sadako-crane/" target="_blank" rel="noopener">${tr("Read the National Archives story","Lee el relato de los Archivos Nacionales (en inglés)")}${NEWTAB()}</a>. ${tr("Show-me question: why might a museum place this crane in the same room as the Nagasaki bomb’s safety plug?","Pregunta para demostrar: ¿por qué un museo pondría esta grulla en la misma sala que el tapón de seguridad de la bomba de Nagasaki?")}</p></div></div>` : `<div class="introrow"><p class="lede">${esc(p.intro)}</p>${art(PATH_ART[id],"plate big")}</div>${inqBtns()}`}
   <div class="cols">
     <div>
