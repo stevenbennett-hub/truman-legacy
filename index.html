@@ -305,6 +305,10 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .symnote{max-width:62ch;margin:.2rem 0 1.2rem;padding:.55rem .9rem;border-left:4px solid var(--green);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
 .symnote strong{font-family:var(--display);font-stretch:92%}
 /* site guide */
+.safeclick{max-width:62ch;margin:-.6rem 0 1.4rem;padding:.55rem .9rem;border-left:4px solid var(--green);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
+.safeclick strong{font-family:var(--display);font-stretch:92%}
+.tryit{margin:.2rem 0 .8rem;padding:.45rem .8rem;background:var(--green-soft);border-radius:8px;font-size:.97rem;max-width:62ch}
+.tryit strong{font-family:var(--display);font-stretch:92%}
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
 .choosehead{margin:1.8rem 0 .3rem}
 .choosesub{margin:0 0 .4rem;max-width:62ch}
@@ -2301,6 +2305,7 @@ function vHome(){
     <p class="sub">${tr("Exploring Truman’s legacy through historical inquiry, with AI as a thinking partner","El legado de Truman a través de la investigación histórica, con la IA como compañera de pensamiento")}</p>
     <div class="hero-row"><div class="eq"><span class="ui">${tr("Essential question","Pregunta esencial")}</span><p>${tr("How do the decisions of one leader shape society, and how can artificial intelligence help us investigate their lasting consequences?","¿Cómo moldean a la sociedad las decisiones de un líder y cómo puede ayudarnos la inteligencia artificial a investigar sus consecuencias duraderas?")}</p></div>${art("desk","hero-art")}</div>
   <p class="showme"><strong>${tr("Missouri is the “Show-Me State.”","Misuri es el «Show-Me State» («el estado de “demuéstramelo”»).")}</strong> ${tr("In this lesson, every claim, from an AI tool, a museum label, or a documentary, has to show you the evidence. Even the nickname’s origin is debated:","En esta lección, toda afirmación, venga de una herramienta de IA, una cédula de museo o un documental, tiene que mostrarte la evidencia. Hasta el origen del apodo se debate:")} <a href="https://www.sos.mo.gov/archives/history/slogan" target="_blank" rel="noopener">${tr("see what the Missouri Secretary of State says","mira lo que dice la Secretaría de Estado de Misuri")}${NEWTAB()}</a>.</p>
+  <p class="safeclick"><strong>${tr("Go ahead and click around.","Adelante, haz clic en todo.")}</strong> ${tr("You can’t break anything. Open folders, try the activities, and change your answers as often as you like. Your work saves in this browser.","No puedes romper nada. Abre carpetas, prueba las actividades y cambia tus respuestas todas las veces que quieras. Tu trabajo se guarda en este navegador.")}</p>
   <p class="guidelink"><a href="#guide">${tr("New here? See what each tab does","¿Eres nuevo? Mira para qué sirve cada pestaña")} →</a></p>
     <h2 id="h-choose" class="choosehead">${tr("Start here: choose your pathway","Empieza aquí: elige tu ruta")}</h2>
     <p class="choosesub">${tr("Each pathway is one of Truman’s decisions, or a moment that shaped him. Open a folder to look inside.","Cada ruta es una de las decisiones de Truman o un momento que lo formó. Abre una carpeta para ver qué hay dentro.")}</p>
@@ -2311,6 +2316,7 @@ function vHome(){
     </div>
   </section>
 
+  <div class="tnote tonly"><p><strong>Make exploring safe.</strong> Many students won’t click on something until they know it won’t break or count against them. Before they choose a pathway, try a two-minute “click everything” warm-up: students open three folders, sort one statement on purpose “wrong,” read the feedback, and change it. Then ask what they noticed. Trying things out becomes part of the lesson instead of a risk.</p></div>
   <div class="tnote tonly"><p><strong>Start here:</strong> <a href="#teacher" data-act="tg" data-el="tg-buck">open the 15-minute opening activity, “The Buck Stops Here”</a>. It uses the two sign photographs below and previews the lesson’s AI-checking habit.</p></div>
   <section class="section archive-pair" aria-labelledby="h-arch">
     <h2 id="h-arch" class="sr">${tr("From the archives","De los archivos")}</h2>
@@ -2415,6 +2421,7 @@ function vPathway(id){
       <section class="section" aria-labelledby="sort-${id}">
         <h3 id="sort-${id}">${tr("Investigation: fact, interpretation, or invented?","Investigación: ¿hecho, interpretación o invento?")}</h3>
         <p>${tr("AI tools blend all three into confident paragraphs. Sort each statement, then read the feedback. Use the sources to check anything you’re unsure of.","Las herramientas de IA mezclan los tres tipos en párrafos que suenan seguros. Clasifica cada afirmación y luego lee la retroalimentación. Usa las fuentes para verificar lo que no tengas claro.")}</p>
+        <p class="tryit"><strong>${tr("Your first answer isn’t final.","Tu primera respuesta no es definitiva.")}</strong> ${tr("Sort, read the feedback, and change your mind if the evidence says to. Historians revise their thinking all the time.","Clasifica, lee la retroalimentación y cambia de opinión si la evidencia lo indica. Los historiadores revisan sus ideas todo el tiempo.")}</p>
         <ul class="sorter">${sortHTML}</ul>
         <p class="ui" aria-live="polite">${done ? tr(`${score} of ${p.sort.length} match the evidence`, `${score} de ${p.sort.length} coinciden con la evidencia`) + (done < p.sort.length ? tr(`, ${p.sort.length - done} left to sort`, `; te faltan ${p.sort.length - done}`) : "") : ""}</p>
       </section>
