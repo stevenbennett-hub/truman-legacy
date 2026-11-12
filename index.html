@@ -312,6 +312,8 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .guidelink{margin:-.8rem 0 1.6rem;font-family:var(--display);font-weight:700}
 .choosehead{margin:1.8rem 0 .3rem}
 .choosesub{margin:0 0 .4rem;max-width:62ch}
+.whychoose{max-width:62ch;margin:.5rem 0 .9rem;padding:.55rem .9rem;border-left:4px solid var(--brass);background:var(--card);border-radius:0 8px 8px 0;font-size:1rem}
+.whychoose strong{font-family:var(--display);font-stretch:92%}
 .drawer-body .peekrow{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;margin-top:.7rem}
 .drawer-body .peekrow a{font-family:var(--display);font-weight:700}
 .gtabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem}
@@ -2309,6 +2311,7 @@ function vHome(){
   <p class="guidelink"><a href="#guide">${tr("New here? See what each tab does","¿Eres nuevo? Mira para qué sirve cada pestaña")} →</a></p>
     <h2 id="h-choose" class="choosehead">${tr("Start here: choose your pathway","Empieza aquí: elige tu ruta")}</h2>
     <p class="choosesub">${tr("Each pathway is one of Truman’s decisions, or a moment that shaped him. Open a folder to look inside.","Cada ruta es una de las decisiones de Truman o un momento que lo formó. Abre una carpeta para ver qué hay dentro.")}</p>
+    <p class="whychoose"><strong>${tr("Why choose?","¿Por qué elegir?")}</strong> ${tr("Your pathway becomes your investigation. Once you choose, the three phases, the AI coach, the museum map, and your journal all focus on that decision, and you can print its documents. Look inside a few folders first. You can switch later, but your notes don’t reset, so it’s best to settle on one before you start writing.","Tu ruta se convierte en tu investigación. Cuando la eliges, las tres fases, el coach de IA, el mapa del museo y tu diario se enfocan en esa decisión, y puedes imprimir sus documentos. Mira dentro de algunas carpetas primero. Puedes cambiar después, pero tus notas no se borran, así que es mejor decidirte antes de empezar a escribir.")}</p>
     <div class="drawer">
       <div class="tabs" role="group" aria-labelledby="h-choose">${tabs}</div>
       <div class="drawer-body"><p id="peek" aria-live="polite">${sel ? `${tr("Your pathway:","Tu ruta:")} <strong>${esc(sel.title)}</strong>. ${esc(sel.question[band()])}` : tr("Click or tap a folder to open its pathway. On a computer, point to a folder first to preview it here.","Haz clic o toca una carpeta para abrir su ruta. En una computadora, pasa el cursor sobre una carpeta para ver aquí una vista previa.")}</p>
@@ -2337,6 +2340,7 @@ function vHome(){
     <div>
       <h2>${tr("Your progress","Tu progreso")}</h2>
       <p class="fine">${tr("Saved in this browser only.","Se guarda solo en este navegador.")} <a href="#journal">${tr("Save your work as a file","Guarda tu trabajo en un archivo")}</a> ${tr("so you don’t lose it on a shared computer.","para no perderlo en una computadora compartida.")}</p>
+      <p class="fine"><strong>${tr("Prefer paper?","¿Prefieres papel?")}</strong> ${tr("Print your journal or download it for Word or Google Docs anytime.","Imprime tu diario o descárgalo para Word o Google Docs cuando quieras.")} <a href="#journal">${tr("Go to your journal","Ir a tu diario")} →</a></p>
       ${checklist()}
     </div>
     <div>
