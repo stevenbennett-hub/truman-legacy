@@ -304,6 +304,9 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 .namefields{max-width:820px;gap:0 1.4rem}
 .linkbtn{all:unset;cursor:pointer;color:var(--link,var(--green));text-decoration:underline;font:inherit}
 .linkbtn:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.reflist{padding-left:1.6rem;font-size:.92rem;line-height:1.5}
+.reflist li{margin:.35rem 0;overflow-wrap:anywhere}
+.refs h3{margin-top:1.6rem}
 /* opening activity */
 .buckbox{margin:0 0 1.4rem}
 .buckphotos{max-width:640px}
@@ -514,7 +517,7 @@ textarea:focus,input:focus,select:focus{border-color:var(--focus)}
 <main id="main" tabindex="-1"></main>
 <footer>
   <p id="foot1"><strong>Presidential Decisions, Lasting Consequences: Exploring Truman’s Legacy Through AI.</strong> Original lesson materials are offered under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 (CC BY 4.0)</a> license. Linked documents, photographs, exhibits, and websites belong to their owners and are not covered by this license. This resource is not affiliated with or endorsed by the Harry S. Truman Library and Museum or the National Archives.</p>
-  <p class="fine"><a href="#guide" id="footguide">How to use this site</a></p><p id="foot2">Developed with assistance from Claude (Anthropic) and reviewed by Steven Bennett. Your work is saved only in this browser.</p>
+  <p class="fine"><a href="#guide" id="footguide">How to use this site</a> · <a href="#resources" id="footrefs">References</a></p><p id="foot2">Developed with assistance from Claude (Anthropic) and reviewed by Steven Bennett. Your work is saved only in this browser.</p>
 </footer>
 <div id="print-area" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1842,12 +1845,12 @@ function audioClip(cls){
 
 /* ---------- video links (self-contained: remove this file and the videoBlock() calls to take them off) ---------- */
 const VIDEOS = {
- acceptance:{url:"https://www.c-span.org/clip/public-affairs-event/truman-acceptance-speech/5137048", src:"C-SPAN", kind:["Primary source: film of the speech","Fuente primaria: filmación del discurso"],
+ acceptance:{url:"https://millercenter.org/the-presidency/presidential-speeches/july-15-1948-democratic-national-convention", src:"Miller Center, University of Virginia", kind:["Primary source: recording and transcript","Fuente primaria: grabación y transcripción"],
   t:["Truman accepts the 1948 Democratic nomination","Truman acepta la candidatura demócrata de 1948"], d:["July 15, 1948","15 de julio de 1948"],
-  w:["Truman spoke at about 2 a.m. to a tired convention. Watch his energy, his gestures, and how the crowd reacts. What do you notice that you missed when you only read the text?","Truman habló cerca de las 2 de la madrugada ante una convención cansada. Observa su energía, sus gestos y cómo reacciona el público. ¿Qué notas que no viste cuando solo leíste el texto?"]},
- farewell:{url:"https://www.c-span.org/program/white-house-event/president-truman-farewell-address/136122", src:"C-SPAN", kind:["Primary source: newsreel","Fuente primaria: noticiero"],
-  t:["Truman’s farewell address (newsreel)","Discurso de despedida de Truman (noticiero)"], d:["January 15, 1953","15 de enero de 1953"],
-  w:["A newsreel showing parts of Truman’s farewell message. How does an unpopular president speak to history? Compare his tone here with the 1948 speech. Remember that a newsreel chose which parts to show.","Un noticiero que muestra partes del mensaje de despedida de Truman. ¿Cómo le habla a la historia un presidente impopular? Compara su tono aquí con el discurso de 1948. Recuerda que el noticiero eligió qué partes mostrar."]},
+  w:["Truman spoke at about 2 a.m. to a tired convention, mostly without a script. Listen for his energy, his pace, and how the crowd reacts. What do you notice that you missed when you only read the text?","Truman habló cerca de las 2 de la madrugada ante una convención cansada, casi sin guion. Escucha su energía, su ritmo y cómo reacciona el público. ¿Qué notas que no viste cuando solo leíste el texto?"]},
+ farewell:{url:"https://millercenter.org/the-presidency/presidential-speeches/january-15-1953-farewell-address", src:"Miller Center, University of Virginia", kind:["Primary source: recording and transcript","Fuente primaria: grabación y transcripción"],
+  t:["Truman’s farewell address","Discurso de despedida de Truman"], d:["January 15, 1953","15 de enero de 1953"],
+  w:["Truman spoke from his office in the White House, five days before leaving the presidency with low approval ratings. How does he make his case to history? Listen for the line about passing the buck, and compare his tone with the 1948 speech.","Truman habló desde su oficina en la Casa Blanca, cinco días antes de dejar la presidencia con baja aprobación. ¿Cómo defiende su caso ante la historia? Escucha la frase sobre «pass the buck» y compara su tono con el discurso de 1948."]},
  atomic:{url:"https://www.pbs.org/video/american-experience-truman-on-ending-a-war-atomic-bombs/", src:"PBS American Experience", kind:["Documentary clip (2 min 48 s)","Fragmento de documental (2 min 48 s)"],
   t:["Truman on ending a war: atomic bombs","Truman y el fin de una guerra: las bombas atómicas"], d:["From the American Experience film Truman","Del documental Truman de American Experience"],
   w:["1) Whose point of view does the clip tell the story from? 2) Whose voices are missing: Japanese civilians, the scientists who opposed using the bomb, historians who question it? 3) Show me: PBS quotes Truman saying the bomb “places a terrible responsibility upon myself and upon the War Department.” His August 9 radio report (the audio above) says “It is an awful responsibility which has come to us.” Are these the same statement? Where could the documentary’s quote come from?","1) ¿Desde el punto de vista de quién cuenta la historia el fragmento? 2) ¿Qué voces faltan: civiles japoneses, los científicos que se opusieron a usar la bomba, los historiadores que la cuestionan? 3) Demuéstralo: PBS cita a Truman diciendo que la bomba «places a terrible responsibility upon myself and upon the War Department» («pone una terrible responsabilidad sobre mí y sobre el Departamento de Guerra»). Su informe por radio del 9 de agosto (el audio de arriba) dice «It is an awful responsibility which has come to us» («Es una responsabilidad tremenda la que nos ha llegado»). ¿Son la misma declaración? ¿De dónde podría venir la cita del documental?"],
@@ -1877,7 +1880,7 @@ function videoCard(id){
     <div>
       <p class="dmeta"><span class="pill">${esc(L(v.kind))}</span> <span class="fine">${esc(L(v.d))}</span></p>
       <h4><a href="${v.url}" target="_blank" rel="noopener">${esc(L(v.t))}${NEWTAB()}</a></h4>
-      <p class="fine">${tr("Watch on","Ver en")} ${esc(v.src)}${isES() ? " (en inglés)" : ""}</p>
+      <p class="fine">${tr("On","En")} ${esc(v.src)}${isES() ? " (en inglés)" : ""}</p>
       <p class="dlook"><strong class="ui">${tr("Watch for:","Observa:")}</strong> ${esc(L(v.w))}</p>
       ${v.note ? `<p class="fine">${esc(L(v.note))}</p>` : ""}
     </div>
@@ -1887,8 +1890,63 @@ function videoBlock(ids, title, intro){
   return `<section class="section videos" aria-label="${esc(title)}">
     <h3>${esc(title)}</h3>${intro ? `<p>${intro}</p>` : ""}
     <div class="vgrid">${ids.map(videoCard).join("")}</div>
-    <p class="fine">${tr("Videos open on the PBS, C-SPAN, or Truman Library website. If one won’t play, your school network may block it; ask your teacher.","Los videos se abren en el sitio de PBS, C-SPAN o la Biblioteca Truman. Si alguno no se reproduce, puede que la red de tu escuela lo bloquee; pregúntale a tu maestro o maestra.")}</p>
+    <p class="fine">${tr("Recordings and videos open on the Miller Center, PBS, or Truman Library website. If one won’t play, your school network may block it; ask your teacher.","Las grabaciones y los videos se abren en el sitio del Miller Center, de PBS o de la Biblioteca Truman. Si alguna no se reproduce, puede que la red de tu escuela la bloquee; pregúntale a tu maestro o maestra.")}</p>
   </section>`;
+}
+
+/* ---------- full reference list, generated from the site's own data ---------- */
+const REF_ORG = [
+ [/trumanlibraryinstitute\.org/,"Truman Library Institute"],[/trumanlibrary\.(gov|org)/,"Harry S. Truman Library & Museum"],
+ [/docsteach\.org/,"National Archives, DocsTeach"],[/catalog\.archives\.gov/,"National Archives Catalog"],[/archives\.gov/,"National Archives"],
+ [/history\.state\.gov/,"U.S. Department of State, Office of the Historian"],[/un\.org/,"United Nations"],[/knesset\.gov\.il/,"The Knesset"],
+ [/pendergastkc\.org/,"Kansas City Public Library, The Pendergast Years"],[/justia\.com/,"Justia"],[/nps\.gov/,"National Park Service"],
+ [/artsandculture\.google\.com/,"Google Arts & Culture"],[/hpmm-db\.jp|hpmmuseum\.jp/,"Hiroshima Peace Memorial Museum"],
+ [/millercenter\.org/,"Miller Center, University of Virginia"],[/pbs\.org/,"PBS"],[/wilsoncenter\.org/,"Wilson Center Digital Archive"],
+ [/hmdb\.org/,"Historical Marker Database"],[/theclio\.com/,"Clio"],[/youtube\.com/,"YouTube"],[/sos\.mo\.gov/,"Missouri Secretary of State"],
+ [/dese\.mo\.gov/,"Missouri Department of Elementary and Secondary Education"],[/nuclearsecrecy\.com/,"Wellerstein, Alex. Restricted Data"],
+ [/commons\.wikimedia\.org/,"Wikimedia Commons"],[/fbi\.gov/,"Federal Bureau of Investigation"],[/justice\.gov/,"U.S. Department of Justice"],
+ [/si\.edu/,"Smithsonian Institution"],[/ncsl\.org/,"National Conference of State Legislatures"],[/mit\.edu/,"MIT Election Data and Science Lab"],
+ [/heritage\.org/,"The Heritage Foundation"],[/brennancenter\.org/,"Brennan Center for Justice"],[/loc\.gov/,"Library of Congress"]
+];
+const refOrg = (url, given) => given || (REF_ORG.find(([re]) => re.test(url)) || [null, (url.match(/\/\/([^/]+)/) || [,"Web"])[1]])[1];
+const PRIMARY_RE = /primary|oral|diary|letter|press release|executive order|petition|cable|memo|report|statement|speech|interview|founding|newspaper|note|recording|newsreel|film/i;
+function buildRefs(){
+  const seen = new Set(), groups = {primary:[], photos:[], secondary:[]};
+  const key = u => (u || "").replace(/[#?].*$/,"").replace(/\/$/,"").toLowerCase();
+  const add = (g, url, org, title, date, extra) => { if (!url || seen.has(key(url))) return; seen.add(key(url)); let o = refOrg(url, org); if (/^Truman Library(?! Institute)/i.test(o) || o === "National Archives (Truman Library)") o = "Harry S. Truman Library & Museum"; groups[g].push({url, org: o, title, date: date || "", extra: extra || ""}); };
+  // primary sources first
+  Object.values(DOCS).flat().forEach(x => add("primary", x.url, null, x.t[0], x.d[0], x.k[0]));
+  SPEECHES.forEach(s => { add("primary", s.text, "Harry S. Truman Library & Museum, Public Papers of the Presidents", "Truman, Harry S. " + s.t[0], s.d[0], "Speech text"); if (s.audio) add("primary", s.audio, "Harry S. Truman Library & Museum", "Truman, Harry S. " + s.t[0], s.d[0], "Audio recording"); });
+  add("primary", AUDIO_HIROSHIMA.rec, "Wikimedia Commons", "Truman, Harry S. Radio report to the American people on the Potsdam Conference (excerpt; file titled “Truman on Hiroshima”)", "August 9, 1945", "Audio recording");
+  add("primary", AUDIO_HIROSHIMA.full, "Harry S. Truman Library & Museum, Public Papers of the Presidents", "Truman, Harry S. Radio Report to the American People on the Potsdam Conference", "August 9, 1945", "Speech text");
+  Object.values(VIDEOS).forEach(v => add("primary", v.url, null, v.t[0], v.d[0], v.kind[0]));
+  const allSources = [...PATHWAYS.flatMap(p => [...(p.sources || []), ...((p.now && p.now.sources) || [])]), ...IDEA_SOURCES.flatMap(g => g.items), ...RES, ...Object.values(STATION_LINKS).flat(), ...REMOTE,
+    ...SPEECHES.filter(s => s.counter).map(s => ({title:s.counter.t[0], url:s.counter.url, kind:"Related source"}))];
+  allSources.filter(s => PRIMARY_RE.test(s.kind || "")).forEach(s => add("primary", s.url, s.org, s.title, "", s.kind));
+  Object.entries(PHOTOS).forEach(([k,p]) => add("photos", p.rec, null, p.cap[0].split(". ")[0].replace(/\.$/,""), "", p.cr[0] + (p.pd === false ? (p.disputed ? "; rights disputed" : "; not public domain") : "; public domain") + (/^\d/.test(k) ? "; accession " + k : "")));
+  allSources.forEach(s => add("secondary", s.url, s.org, s.title, "", s.kind));
+  add("secondary", "https://blog.nuclearsecrecy.com/2018/01/19/purely-military-target/", null, "A “purely military” target?", "January 19, 2018", "Essay");
+  add("secondary", "https://www.sos.mo.gov/archives/history/slogan", null, "Show Me State", "", "Reference page");
+  const sorter = (a,b) => (a.org + a.title).localeCompare(b.org + b.title);
+  Object.values(groups).forEach(g => g.sort(sorter));
+  return groups;
+}
+const STANDARD_REFS = [
+  "National Council for the Social Studies. College, Career, and Civic Life (C3) Framework for Social Studies State Standards. Silver Spring, MD: NCSS, 2013.",
+  "National Governors Association Center for Best Practices and Council of Chief State School Officers. Common Core State Standards for English Language Arts & Literacy in History/Social Studies, Science, and Technical Subjects. Washington, DC, 2010.",
+  "International Society for Technology in Education. ISTE Standards for Students.",
+  "NGSS Lead States. Next Generation Science Standards: For States, By States. Washington, DC: National Academies Press, 2013.",
+  "Missouri Department of Elementary and Secondary Education. Missouri Learning Standards: Social Studies, Grades 6–12. Jefferson City, MO, 2016. https://dese.mo.gov/college-career-readiness/curriculum/missouri-learning-standards."
+];
+function refLine(r){ const t = String(r.title).replace(/“/g,"‘").replace(/”/g,"’"); return `${esc(r.org)}. “${esc(t)}.”${r.date ? " " + esc(r.date) + "." : ""}${r.extra ? " " + esc(r.extra) + "." : ""} <a href="${r.url}" target="_blank" rel="noopener">${esc(r.url)}</a>.`; }
+function refsHTML(printing){
+  const g = buildRefs();
+  const sec = (title, list) => `<h3>${title} <span class="fine">(${list.length})</span></h3><ol class="reflist">${list.map(r => `<li>${refLine(r)}</li>`).join("")}</ol>`;
+  return `${sec(tr("Primary sources: documents, speeches, recordings, and film","Fuentes primarias: documentos, discursos, grabaciones y películas"), g.primary)}
+    ${sec(tr("Photographs","Fotografías"), g.photos)}
+    ${sec(tr("Collections, lessons, museum interpretation, and secondary sources","Colecciones, lecciones, interpretación de museos y fuentes secundarias"), g.secondary)}
+    <h3>${tr("Standards and frameworks","Estándares y marcos")}</h3><ol class="reflist">${STANDARD_REFS.map(s => `<li>${esc(s)}</li>`).join("")}</ol>
+    <h3>${tr("Development","Desarrollo")}</h3><ol class="reflist"><li>Anthropic. Claude. AI model used to assist in developing this resource, which was reviewed, verified, and revised by Steven Bennett.</li></ol>`;
 }
 
 /* ---------- minimal .docx writer (no libraries): journal -> Word / Google Docs ---------- */
@@ -2967,7 +3025,8 @@ const RES = [
 function vResources(){
   const res = RES.map((r,i) => isES() ? Object.assign({}, r, {why:ES.resWhy[i]}) : r);
   return `
-  <h2 tabindex="-1">${tr("Resources and glossary","Recursos y glosario")}</h2>
+  <h2 tabindex="-1">${tr("References and resources","Referencias y recursos")}</h2>
+  <p class="ui"><a href="#reflist" data-act="jump" data-el="reflist">${tr("Full reference list","Lista completa de referencias")}</a> · <a href="#glossary-h" data-act="jump" data-el="glossary-h">${tr("Glossary","Glosario")}</a></p>
   <div class="introrow"><p class="lede">${tr("Verified links to the archives and museums behind this lesson, plus a glossary of key terms.","Enlaces verificados a los archivos y museos detrás de esta lección, además de un glosario de términos clave.")}</p>${art("boxes","plate")}</div>
   <div class="cols">
     <div>
@@ -2983,11 +3042,18 @@ function vResources(){
       <div class="note"><p><strong class="ui">${tr("About images.","Sobre las imágenes.")}</strong> ${tr("This page includes only photographs marked public domain and links to everything else. Materials created by the National Archives are generally in the public domain, but donated papers, photographs, and items from other institutions may carry restrictions. Check the rights statement on each item before reusing it.","Esta página incluye solo fotografías de dominio público y enlaza a todo lo demás. Los materiales creados por los Archivos Nacionales suelen ser de dominio público, pero los documentos donados, las fotografías y los materiales de otras instituciones pueden tener restricciones. Revisa la declaración de derechos de cada uno antes de reutilizarlo.")}</p></div>
     </div>
     <aside>
-      <h3>${tr("Glossary","Glosario")}</h3>
+      <h3 id="glossary-h">${tr("Glossary","Glosario")}</h3>
       <dl>${GLOS().map(([t,d]) => `<dt class="ui" style="font-weight:700;margin-top:.7rem">${t}</dt><dd style="margin:0">${d}</dd>`).join("")}</dl>
       ${isES() ? `<h3 style="margin-top:1.4rem">Términos en inglés que verás en las fuentes</h3><dl>${[["primary source","fuente primaria"],["executive order","orden ejecutiva"],["airlift","puente aéreo"],["loyalty program","programa de lealtad"],["whistle-stop","gira en tren con paradas en pueblos pequeños"],["recognition","reconocimiento (diplomático)"],["partition","partición"],["finding aid","guía de una colección de archivo"]].map(([e,s]) => `<dt class="ui" lang="en" style="font-weight:700;margin-top:.7rem">${e}</dt><dd style="margin:0">${s}</dd>`).join("")}</dl>` : ""}
     </aside>
-  </div>`;
+  </div>
+  <section class="section refs" id="reflist" aria-labelledby="reflist-h">
+    <h2 id="reflist-h" tabindex="-1">${tr("Full reference list","Lista completa de referencias")}</h2>
+    <p>${tr("Every source used in this lesson, grouped by type and listed alphabetically by publisher. Web sources were accessed in November 2026.","Todas las fuentes usadas en esta lección, agrupadas por tipo y ordenadas alfabéticamente por editor. Las fuentes web se consultaron en noviembre de 2026.")}${isES() ? " Los títulos de las fuentes se mantienen en su idioma original." : ""}</p>
+    <div class="btnrow"><button class="btn small" data-act="print" data-k="refs">${tr("Print reference list","Imprimir lista de referencias")}</button><button class="btn small ghost" data-act="download" data-k="refs">${tr("Download","Descargar")}</button></div>
+    <div class="note"><p><strong class="ui">${tr("How to cite this lesson:","Cómo citar esta lección:")}</strong> Bennett, Steven. <em>Presidential Decisions, Lasting Consequences: Exploring Truman’s Legacy Through AI</em>. Created for the Educational Specialist (Ed.S.) program in Educational Technology, University of Central Missouri, 2026. Licensed under CC BY 4.0. https://stevenbennett-hub.github.io/truman-legacy/.</p></div>
+    ${refsHTML()}
+  </section>`;
 }
 
 /* ---------- teacher guide ---------- */
@@ -3110,7 +3176,7 @@ function planBody(){
     <p><strong>Phase 1.</strong> Model the sort with one statement aloud. Circulate to check that interpretations make a claim. A strong inquiry question is contestable and answerable with evidence; a weak one can be answered with a single fact.</p>
     <p><strong>Phase 2.</strong> In the museum, limit screens: students use the printed field guide and enter their best evidence afterward. Point out the difference between original artifacts, reproductions, and interactive simulations such as the Berlin Airlift station. Virtual students complete four stations with the same evidence requirements.</p>
     <p><strong>Museum map and photographs.</strong> Use the interactive map before a visit to assign chaperone routes and after it to connect evidence to online collections. Each photograph is public domain with a credit and a link to its record; students can treat them as primary sources (who took the photo, and why?).</p>
-    <p><strong>Videos.</strong> Video cards in the Rhetoric lab and on the Cold War ideas page link to PBS and C-SPAN rather than embedding players, so they work on filtered school networks and show no ads or autoplay suggestions on this page. Preview each video and confirm it plays on student devices. For an optional full-length biography, C-SPAN’s 1999 <a href="https://www.c-span.org/program/american-presidents/life-portrait-of-harry-s-truman/163696" target="_blank" rel="noopener">“Life Portrait of Harry S. Truman”</a> was broadcast from Independence with Truman Library staff and historians; it runs two to three hours, so assign segments. Treat it as an interpretation that students test against primary sources.</p>
+    <p><strong>Recordings and video.</strong> Cards in the Rhetoric lab link to the Miller Center at the University of Virginia, which hosts recordings and transcripts of Truman’s 1948 acceptance speech and 1953 farewell address, and the Cold War ideas page links to a short PBS clip. They open on those sites rather than embedding players, so they work on filtered school networks and show no ads. Preview each link and confirm it plays on student devices.</p>
     <p><strong>Saving work.</strong> Student work lives in the browser. On shared or managed devices, have students use “Save my work file” at the end of each session and “Load my work file” at the start of the next; that .json file is only for reloading. To turn in work, students use “Download for Word or Google Docs,” which creates a formatted .docx they can submit through Google Classroom or open in Word.</p>
     <p><strong>Phase 3.</strong> For the AI audit, provide a short AI-generated summary yourself if students cannot use AI tools. Emphasize that finding no errors is a valid result if the verification is careful.</p>
   </section>
@@ -3407,7 +3473,7 @@ function vRhetoric(){
   ${isES() ? `<p class="fine">Los discursos y los audios están en inglés. Puedes usar la traducción de tu navegador para leer los textos, pero escucha el audio original para analizar su forma de hablar.</p>` : ""}
   
 
-  ${videoBlock(["acceptance","farewell"], tr("Watch Truman speak","Mira hablar a Truman"), tr("Reading a speech and watching it are different experiences. Both of these speeches are also in the list below, with full text and audio.","Leer un discurso y verlo son experiencias distintas. Ambos discursos también están en la lista de abajo, con texto completo y audio."))}
+  ${videoBlock(["acceptance","farewell"], tr("Hear Truman speak","Escucha hablar a Truman"), tr("Reading a speech and hearing it are different experiences. Each link opens the full recording with a transcript; both speeches are also in the list below.","Leer un discurso y escucharlo son experiencias distintas. Cada enlace abre la grabación completa con su transcripción; ambos discursos también están en la lista de abajo."))}
 
   <section class="section" aria-labelledby="h-speeches">
     <h2 id="h-speeches">${tr("Nine speeches across the pathways","Nueve discursos de todas las rutas")}</h2>
@@ -3573,7 +3639,7 @@ const GUIDE_TABS = [
  ["ai-literacy", ["AI literacy","Alfabetización en IA"], ["The hallucination hunt, five habits for verifying AI, an AI-use disclosure template, and a non-AI partner option.","La cacería de alucinaciones, cinco hábitos para verificar la IA, una plantilla para declarar el uso de IA y una opción con un compañero, sin IA."], ["Students, before using AI","Estudiantes, antes de usar IA"]],
  ["journal", ["Journal","Diario"], ["Everything you’ve written in one place. Download it for Word or Google Docs to turn in, print it, or save a work file to keep going on another day or device.","Todo lo que has escrito en un solo lugar. Descárgalo para Word o Google Docs para entregarlo, imprímelo o guarda un archivo de trabajo para continuar otro día o en otro dispositivo."], ["Students, end of each session","Estudiantes, al final de cada sesión"]],
  ["rubric", ["Rubric","Rúbrica"], ["How your final product is scored. The rubric changes with the grade band: the same five criteria, with different expectations for grades 6–8 and 9–12.","Cómo se califica tu producto final. La rúbrica cambia según el nivel: los mismos cinco criterios, con expectativas distintas para 6.º a 8.º y 9.º a 12.º grado."], ["Students, before the final product","Estudiantes, antes del producto final"]],
- ["resources", ["Resources","Recursos"], ["Verified links to archives and museums, a glossary, and credits for every photograph and recording.","Enlaces verificados a archivos y museos, un glosario y los créditos de cada fotografía y grabación."], ["Reference","Consulta"]]
+ ["resources", ["References","Referencias"], ["A full reference list of every source used in the lesson, with a printable version and a suggested citation, plus key links, photo credits, and a glossary.","Una lista completa de todas las fuentes usadas en la lección, con versión para imprimir y una cita sugerida, además de enlaces clave, créditos de fotos y un glosario."], ["Everyone, for citing and checking sources","Todos, para citar y verificar fuentes"]]
 ];
 function vGuide(){
   const L = a => isES() ? a[1] : a[0];
@@ -3649,6 +3715,7 @@ function printable(k){
     return {title: forStudent && S.path ? tr("Starter documents: ","Documentos para empezar: ") + PW(S.path).short : tr("Starter documents for all pathways","Documentos para empezar de todas las rutas"),
       html: (forStudent ? printHeader() : "") + `<p>${tr("Specific primary sources chosen for each pathway, with an overview of what each one is. Open the links in the interactive lesson, or type them into a browser.","Fuentes primarias específicas elegidas para cada ruta, con una descripción de cada una. Abre los enlaces en la lección interactiva o escríbelos en un navegador.")}</p>` + body};
   }
+  if (k === "refs") return {title:tr("References","Referencias"), html:`<p>${tr("Web sources accessed November 2026.","Fuentes web consultadas en noviembre de 2026.")}</p>` + refsHTML(true)};
   if (k === "rubric") return {title:tr("Assessment rubric","Rúbrica de evaluación"), html: rubricTable()};
   if (k === "journal") return {title:tr("My research journal","Mi diario de investigación"), html: journalBody(true)};
   return {title:"Teacher lesson plan: Presidential Decisions, Lasting Consequences", html: inEnglish(planBody)};
@@ -3671,7 +3738,7 @@ async function doDownload(k){
   const {title, html} = printable(k);
   const lang = k === "plan" ? "en" : S.lang;
   const doc = `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)}</title><style>${PRINT_CSS}</style></head><body><h1>${esc(title)}</h1>${html}<footer>${LICENSE_LINE()}</footer></body></html>`;
-  const base = {field:"field-guide", virtual:"virtual-worksheet", hunt:"hallucination-hunt", key:"answer-key", docs:"starter-documents", docsall:"starter-documents-all-pathways", rhet:"speech-analysis", rubric:"rubric", journal:"journal", plan:"lesson-plan"}[k] || k;
+  const base = {field:"field-guide", virtual:"virtual-worksheet", hunt:"hallucination-hunt", key:"answer-key", refs:"references", docs:"starter-documents", docsall:"starter-documents-all-pathways", rhet:"speech-analysis", rubric:"rubric", journal:"journal", plan:"lesson-plan"}[k] || k;
   const name = "truman-" + base + (isES() && k !== "plan" ? "-es" : "") + ".html";
   await saveBlob(name, doc, tr("Download ready. Open the file and print it if you need paper.","Descarga lista. Abre el archivo e imprímelo si lo necesitas en papel."));
 }
@@ -3713,7 +3780,7 @@ function applyImport(d){
 }
 
 /* ---------- navigation and rendering ---------- */
-const NAV = () => [["home",tr("Home","Inicio")],["pathways",tr("Pathways","Rutas")],["map",tr("Museum map","Mapa del museo")],["ideas",tr("Cold War ideas","Ideas de la Guerra Fría")],["rhetoric",tr("Rhetoric lab","Taller de retórica")],["phase-1",tr("Investigation","Investigación")],["coach",tr("AI coach","Coach de IA")],["timeline",tr("Timeline","Línea de tiempo")],["ai-literacy",tr("AI literacy","Alfabetización en IA")],["journal",tr("Journal","Diario")],["rubric",tr("Rubric","Rúbrica")],["resources",tr("Resources","Recursos")],["teacher",tr("Teacher guide","Guía docente"),true]];
+const NAV = () => [["home",tr("Home","Inicio")],["pathways",tr("Pathways","Rutas")],["map",tr("Museum map","Mapa del museo")],["ideas",tr("Cold War ideas","Ideas de la Guerra Fría")],["rhetoric",tr("Rhetoric lab","Taller de retórica")],["phase-1",tr("Investigation","Investigación")],["coach",tr("AI coach","Coach de IA")],["timeline",tr("Timeline","Línea de tiempo")],["ai-literacy",tr("AI literacy","Alfabetización en IA")],["journal",tr("Journal","Diario")],["rubric",tr("Rubric","Rúbrica")],["resources",tr("References","Referencias")],["teacher",tr("Teacher guide","Guía docente"),true]];
 let currentView = "home", currentArg = null, navigated = false;
 function route(){
   const h = decodeURIComponent(location.hash.slice(1)) || "home";
@@ -3747,7 +3814,7 @@ function renderChrome(){
   document.getElementById("foot1").innerHTML = tr(
     `<strong>Presidential Decisions, Lasting Consequences: Exploring Truman’s Legacy Through AI.</strong> Created by Steven Bennett for the Ed.S. program in Educational Technology at the University of Central Missouri. Original lesson materials are offered under a <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">Creative Commons Attribution 4.0 (CC BY 4.0)</a> license. Linked documents, photographs, exhibits, and websites belong to their owners and are not covered by this license. This resource is not affiliated with or endorsed by the Harry S. Truman Library and Museum or the National Archives.`,
     `<strong>Decisiones presidenciales, consecuencias duraderas: el legado de Truman a través de la IA.</strong> Creado por Steven Bennett para el programa Ed.S. en Tecnología Educativa de la University of Central Missouri. Los materiales originales de la lección se ofrecen con una licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">Creative Commons Atribución 4.0 (CC BY 4.0)</a>. Los documentos, fotografías, exhibiciones y sitios web enlazados pertenecen a sus dueños y no están cubiertos por esta licencia. Este recurso no está afiliado con la Biblioteca y Museo Harry S. Truman ni con los Archivos Nacionales, ni cuenta con su respaldo.`);
-  { const fg = document.getElementById("footguide"); if (fg) fg.textContent = tr("How to use this site","Cómo usar este sitio"); }
+  { const fg = document.getElementById("footguide"); if (fg) fg.textContent = tr("How to use this site","Cómo usar este sitio"); const fr = document.getElementById("footrefs"); if (fr) fr.textContent = tr("References","Referencias"); }
   setText("foot2", tr("Developed with assistance from Claude (Anthropic) and reviewed by Steven Bennett. Last updated and links checked: November 2026. Live version: https://stevenbennett-hub.github.io/truman-legacy/. Your work is saved only in this browser.","Desarrollado con la ayuda de Claude (Anthropic) y revisado por Steven Bennett. Última actualización y revisión de enlaces: noviembre de 2026. Versión en línea: https://stevenbennett-hub.github.io/truman-legacy/. Tu trabajo se guarda solo en este navegador."));
 }
 function focusKey(el){
@@ -3786,6 +3853,7 @@ document.addEventListener("click", e => {
   const d = b.dataset, act = d.act;
   switch (act){
     case "go": go(d.to); break;
+    case "jump": { e.preventDefault(); const el = document.getElementById(d.el); if (el) { el.scrollIntoView({block:"start"}); const h = el.matches("h2,h3") ? el : el.querySelector("h2,h3"); if (h) { h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); } } break; }
     case "tg": e.preventDefault(); if (S.role !== "teacher") { S.role = "teacher"; save(); } pendingJump = d.el; go("teacher"); break;
     case "band": S.band = d.v; save(); render(); toast(d.v === "hs" ? tr("Showing grades 9–12","Mostrando 9.º a 12.º grado") : tr("Showing grades 6–8","Mostrando 6.º a 8.º grado")); break;
     case "role": S.role = d.v; save(); render(); toast(d.v === "teacher" ? tr("Teacher view: notes and guide shown","Vista docente: se muestran las notas y la guía (en inglés)") : tr("Student view","Vista de estudiante")); break;
